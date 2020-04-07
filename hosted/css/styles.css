@@ -1,0 +1,64 @@
+.border {
+  border: 5px solid black;
+}
+
+td {
+}
+
+.autoWidth th {
+  width: auto;
+}
+
+.mlFive {
+  margin-left: 5%;
+}
+
+.fsFifteen {
+  font-size: 15px;
+}
+
+.mtFive {
+  margin-top: 5%;
+}
+
+.activePage {
+  border-bottom: 1px solid yellow;
+}
+
+.navStyles {
+  height:80px;
+  background-color:#37434d;
+  color:#ffffff;"
+}
+
+.sendStyles {
+  padding:40px;padding-right:5px;padding-left:4px;
+}
+
+.sendMargin {
+  margin-left: 0px;margin-right: 0px;padding: 10px;
+}
+
+.sendPadding {
+  padding-left:20px;padding-right:20px;
+}
+
+.downloadButton {
+  background-color: #303641;margin-top: 10px;
+}
+
+.buttonBackground {
+  background-color:#303641;
+}
+
+.sendDropdown {
+  background-color: #f2f5f8;color: #222222;
+}
+
+.emailBorder {
+  height: 100px; border 1px solid black;
+}
+
+.pbFt {
+  padding-bottom: 15px;;
+}
