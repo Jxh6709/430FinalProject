@@ -14,6 +14,9 @@ const router = (app) => {
   app.post('/setComponent',mid.requiresLogin, controllers.MainApp.setActiveComponent);
   app.get('/getComponent',mid.requiresLogin,controllers.MainApp.getActiveComponent);
 
+  app.get('/getUserInfo',mid.requiresLogin, controllers.UserPage.getInfo);
+  app.put('/updateUser',mid.requiresLogin,controllers.UserPage.updateUser);
+
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
 };
 

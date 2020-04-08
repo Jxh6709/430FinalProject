@@ -32,7 +32,7 @@ const login = (request, response) => {
 
     // B storing data
     req.session.account = Account.AccountModel.toAPI(account);
-    //req.session.activeComponent = 'profile'
+    req.session.activeComponent = 'profile'
 
     return res.json({ redirect: '/app', pageToLoad: 'profile' });
   });

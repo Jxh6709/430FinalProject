@@ -1,6 +1,47 @@
 "use strict";
 
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 var ProfileComponent = function ProfileComponent(props) {
+  var _props$user = props.user,
+      firstName = _props$user.firstName,
+      lastName = _props$user.lastName,
+      email = _props$user.email;
+
+  var _React$useState = React.useState({
+    firstName: firstName,
+    lastName: lastName,
+    email: email
+  }),
+      _React$useState2 = _slicedToArray(_React$useState, 2),
+      values = _React$useState2[0],
+      setValues = _React$useState2[1];
+
+  var handleChange = function handleChange(e) {
+    setValues(_objectSpread({}, values, _defineProperty({}, e.target.name, e.target.value)));
+  };
+
+  var reset = function reset(e) {
+    e.preventDefault();
+    setValues({
+      firstName: firstName,
+      lastName: lastName,
+      email: email
+    });
+  };
+
   return (
     /*#__PURE__*/
     React.createElement("div", null,
@@ -85,7 +126,9 @@ var ProfileComponent = function ProfileComponent(props) {
     React.createElement("input", {
       className: "form-control",
       type: "text",
-      name: "firstname"
+      name: "firstName",
+      value: values.firstName,
+      onChange: handleChange
     }))),
     /*#__PURE__*/
     React.createElement("div", {
@@ -101,7 +144,9 @@ var ProfileComponent = function ProfileComponent(props) {
     React.createElement("input", {
       className: "form-control",
       type: "text",
-      name: "lastname"
+      name: "lastName",
+      value: values.lastName,
+      onChange: handleChange
     })))),
     /*#__PURE__*/
     React.createElement("div", {
@@ -113,50 +158,10 @@ var ProfileComponent = function ProfileComponent(props) {
     React.createElement("input", {
       className: "form-control",
       type: "email",
-      autocomplete: "off",
-      required: "",
-      name: "email"
+      name: "email",
+      value: values.email,
+      onChange: handleChange
     })),
-    /*#__PURE__*/
-    React.createElement("div", {
-      className: "form-row"
-    },
-    /*#__PURE__*/
-    React.createElement("div", {
-      className: "col-sm-12 col-md-6"
-    },
-    /*#__PURE__*/
-    React.createElement("div", {
-      className: "form-group"
-    },
-    /*#__PURE__*/
-    React.createElement("label", null, "Password "),
-    /*#__PURE__*/
-    React.createElement("input", {
-      className: "form-control",
-      type: "password",
-      name: "password",
-      autocomplete: "off",
-      required: ""
-    }))),
-    /*#__PURE__*/
-    React.createElement("div", {
-      className: "col-sm-12 col-md-6"
-    },
-    /*#__PURE__*/
-    React.createElement("div", {
-      className: "form-group"
-    },
-    /*#__PURE__*/
-    React.createElement("label", null, "Confirm Password"),
-    /*#__PURE__*/
-    React.createElement("input", {
-      className: "form-control",
-      type: "password",
-      name: "confirmpass",
-      autocomplete: "off",
-      required: ""
-    })))),
     /*#__PURE__*/
     React.createElement("hr", null),
     /*#__PURE__*/
@@ -170,13 +175,15 @@ var ProfileComponent = function ProfileComponent(props) {
     /*#__PURE__*/
     React.createElement("button", {
       className: "btn btn-primary form-btn",
-      type: "submit"
+      onClick: function onClick() {
+        updateUser(user);
+      }
     }, "SAVE "),
     /*#__PURE__*/
     React.createElement("button", {
-      className: "btn btn-danger form-btn",
-      type: "reset"
-    }, "CANCEL "))))))),
+      className: "btn btn-info form-btn",
+      onClick: reset
+    }, "UNDO "))))))),
     /*#__PURE__*/
     React.createElement("div", {
       className: "col-md-12 search-table-col mtFive"
@@ -234,7 +241,7 @@ var ProfileComponent = function ProfileComponent(props) {
     },
     /*#__PURE__*/
     React.createElement("td", {
-      colspan: "12"
+      colSpan: "12"
     },
     /*#__PURE__*/
     React.createElement("i", {
@@ -316,6 +323,83 @@ var ProfileComponent = function ProfileComponent(props) {
     React.createElement("i", {
       className: "fa fa-trash fsFifteen"
     })))))))))
+  );
+};
+
+var TestTable = function TestTable(props) {
+  var _React$useState3 = React.useState({
+    columns: [{
+      title: 'Name',
+      field: 'name'
+    }, {
+      title: 'Surname',
+      field: 'surname'
+    }, {
+      title: 'Birth Year',
+      field: 'birthYear',
+      type: 'numeric'
+    }, {
+      title: 'Birth Place',
+      field: 'birthCity',
+      lookup: {
+        34: 'İstanbul',
+        63: 'Şanlıurfa'
+      }
+    }],
+    data: [{
+      name: 'Mehmet',
+      surname: 'Baran',
+      birthYear: 1987,
+      birthCity: 63
+    }, {
+      name: 'Zerya Betül',
+      surname: 'Baran',
+      birthYear: 2017,
+      birthCity: 34
+    }]
+  }),
+      _React$useState4 = _slicedToArray(_React$useState3, 2),
+      state = _React$useState4[0],
+      setState = _React$useState4[1];
+
+  console.log(state);
+  return (
+    /*#__PURE__*/
+    React.createElement("div", null,
+    /*#__PURE__*/
+    React.createElement("div", {
+      style: {
+        maxWidth: "100%"
+      }
+    },
+    /*#__PURE__*/
+    React.createElement(MaterialUI.Table, {
+      columns: [{
+        title: "Adı",
+        field: "name"
+      }, {
+        title: "Soyadı",
+        field: "surname"
+      }, {
+        title: "Doğum Yılı",
+        field: "birthYear",
+        type: "numeric"
+      }, {
+        title: "Doğum Yeri",
+        field: "birthCity",
+        lookup: {
+          34: "İstanbul",
+          63: "Şanlıurfa"
+        }
+      }],
+      data: [{
+        name: "Mehmet",
+        surname: "Baran",
+        birthYear: 1987,
+        birthCity: 63
+      }],
+      title: "Demo Title"
+    })))
   );
 };
 
@@ -690,15 +774,54 @@ var SendComponent = function SendComponent(props) {
     })))))))))
   );
 };
+/**
+ * const handleChange = (e, index) => {
+    setValues([
+      ...values.slice(0, index),
+      { ...values[index], [e.target.name]: e.target.value },
+      ...values.slice(index + 1),
+    ])
+  }
+  values.map((node, index) => (
+{values ? (
+          values.map((node, index) => (<TextField
+                      type="text"
+                      name="medicationName"
+                      label="Medication Name"
+                      variant="outlined"
+                      fullWidth
+                      value={node.medicationName}
+                      index={index}
+                      onChange={(e) => handleChange(e, index)}
+                      margin="normal"
+                      required
+                    />))
+        ) : (
+          <Typography variant="h3">
+            We do not have any medications listed for you.
+          </Typography>
+        )}
+
+ */
 "use strict";
 
 var createProfileWindow = function createProfileWindow(csrf) {
+  sendAjax('GET', '/getUserInfo', null, function (res) {
+    //console.log(res);
+    var user = res.error || !res.username ? null : res;
+    ReactDOM.render(
+    /*#__PURE__*/
+    React.createElement(TestTable, {
+      children: "null"
+    }), document.querySelector('#test'));
+    ReactDOM.render(
+    /*#__PURE__*/
+    React.createElement(ProfileComponent, {
+      csrf: csrf,
+      user: user
+    }), document.querySelector('#content'));
+  });
   createNavWindow(csrf, "profile");
-  ReactDOM.render(
-  /*#__PURE__*/
-  React.createElement(ProfileComponent, {
-    csrf: csrf
-  }), document.querySelector('#content'));
 };
 
 var createNavWindow = function createNavWindow(csrf, activePage) {
@@ -771,6 +894,11 @@ var setComponent = function setComponent(activePage, csrf) {
 
 window.onload = function () {
   getToken();
+};
+"use strict";
+
+var updateUser = function updateUser(user) {
+  console.log(user);
 };
 "use strict";
 

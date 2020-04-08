@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const mongoose = require('mongoose');
+require('mongoose-type-email');
 
 mongoose.Promise = global.Promise;
 
@@ -23,6 +24,23 @@ const AccountSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
+  },
+  firstName: {
+    required: true,
+    type: String
+  },
+  lastName: {
+    required: true,
+    type: String
+  },
+  email: {
+    type: mongoose.SchemaTypes.Email,
+    required: true,
+  },
+  isAdmin: {
+    type: Boolean,
+    required: false,
+    default: false
   },
   createdDate: {
     type: Date,
@@ -79,6 +97,22 @@ AccountSchema.statics.authenticate = (username, password, callback) => {
       return callback();
     });
   });
+};
+
+AccountSchema.statics.updateUser = (id, userObj, callback) => {
+  AccountModel.findOneAndUpdate(id,userObj, {
+    new: true
+  }, (err, res) => {
+    if (err) {
+      return callback({error: err});
+    }
+
+    return callback(res);
+  });
+};
+
+AccountSchema.statics.getAllUsers = (callback) => {
+  return AccountModel.find({});
 };
 
 AccountModel = mongoose.model('Account', AccountSchema);

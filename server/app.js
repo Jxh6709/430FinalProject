@@ -70,6 +70,7 @@ app.use(session({
   }),
   secret: 'Yo Quiero Taco Bell',
   resave: true,
+  secure: false,
   saveUninitialized: true,
   cookie: {
     httpOnly: true,

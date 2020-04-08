@@ -1,9 +1,19 @@
 const createProfileWindow = (csrf) => {
+    sendAjax('GET','/getUserInfo',null, (res) => {
+        //console.log(res);
+        const user = (res.error || !res.username) ? null : res;
+        ReactDOM.render(
+            <TestTable children={"null"}/>,
+            document.querySelector('#test')
+        );
+        ReactDOM.render(
+            <ProfileComponent csrf={csrf} user={user}/>,
+            document.querySelector('#content')
+        );
+
+    });
     createNavWindow(csrf, "profile");
-    ReactDOM.render(
-        <ProfileComponent csrf={csrf}/>,
-        document.querySelector('#content')
-    );
+    
 };
 const createNavWindow = (csrf, activePage) => {
     //setComponent(activePage, csrf);

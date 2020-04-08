@@ -34,6 +34,7 @@
     "@babel/core": "^7.8.4",
     "@babel/preset-env": "^7.8.4",
     "@babel/preset-react": "^7.9.4",
+    "babel-plugin-import": "^1.13.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.0.1",
     "eslint-plugin-import": "^2.20.1",
@@ -56,6 +57,8 @@
     "express-session": "^1.17.0",
     "helmet": "^3.21.2",
     "mongoose": "^5.9.1",
+    "mongoose-type-email": "^1.0.12",
+    "react": "^16.13.1",
     "redis": "^3.0.2",
     "serve-favicon": "^2.5.0",
     "underscore": "^1.9.2"

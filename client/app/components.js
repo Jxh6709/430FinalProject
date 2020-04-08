@@ -1,4 +1,17 @@
+
 const ProfileComponent = (props) => {
+    const {firstName,lastName, email} = props.user; 
+    const [values, setValues] = React.useState({
+        firstName, lastName, email
+    });
+ 
+    const handleChange = (e) => {
+        setValues({...values,[e.target.name]:e.target.value});
+    }
+    const reset = (e) => {
+        e.preventDefault();
+        setValues({firstName, lastName, email})
+    }
     return (
         <div>
             <div className="container profile profile-view" id="profile">
@@ -21,24 +34,24 @@ const ProfileComponent = (props) => {
                             <hr/>
                             <div className="form-row">
                                 <div className="col-sm-12 col-md-6">
-                                    <div className="form-group"><label>Firstname </label><input className="form-control" type="text" name="firstname"/></div>
+                                    <div className="form-group"><label>Firstname </label><input className="form-control" type="text" name="firstName" value={values.firstName} onChange={handleChange} /></div>
                                 </div>
                                 <div className="col-sm-12 col-md-6">
-                                    <div className="form-group"><label>Lastname </label><input className="form-control" type="text" name="lastname"/></div>
+                                    <div className="form-group"><label>Lastname </label><input className="form-control" type="text" name="lastName" value={values.lastName} onChange={handleChange}/></div>
                                 </div>
                             </div>
-                            <div className="form-group"><label>Email </label><input className="form-control" type="email" autocomplete="off" required="" name="email"/></div>
-                            <div className="form-row">
+                            <div className="form-group"><label>Email </label><input className="form-control" type="email"  name="email" value={values.email} onChange={handleChange}/></div>
+                            {/* <div className="form-row">
                                 <div className="col-sm-12 col-md-6">
                                     <div className="form-group"><label>Password </label><input className="form-control" type="password" name="password" autocomplete="off" required=""/></div>
                                 </div>
                                 <div className="col-sm-12 col-md-6">
                                     <div className="form-group"><label>Confirm Password</label><input className="form-control" type="password" name="confirmpass" autocomplete="off" required=""/></div>
                                 </div>
-                            </div>
+                            </div> */}
                             <hr/>
                             <div className="form-row">
-                                <div className="col-md-12 content-right"><button className="btn btn-primary form-btn" type="submit">SAVE </button><button className="btn btn-danger form-btn" type="reset">CANCEL </button></div>
+                                <div className="col-md-12 content-right"><button className="btn btn-primary form-btn" onClick={() => {updateUser(user)}}>SAVE </button><button className="btn btn-info form-btn" onClick={reset} >UNDO </button></div>
                             </div>
                         </div>
                     </div>
@@ -58,7 +71,7 @@ const ProfileComponent = (props) => {
                         </thead>
                         <tbody>
                             <tr className="warning no-result">
-                                <td colspan="12"><i className="fa fa-warning"></i>&nbsp; No Result !!!</td>
+                                <td colSpan="12"><i className="fa fa-warning"></i>&nbsp; No Result !!!</td>
                             </tr>
                             <tr>
                                 <td>Bootstrap Stuido</td>
@@ -80,6 +93,56 @@ const ProfileComponent = (props) => {
             </div>
         </div>
     )
+};
+
+
+const TestTable = (props) => {
+    
+    const [state, setState] = React.useState({
+        columns: [
+          { title: 'Name', field: 'name' },
+          { title: 'Surname', field: 'surname' },
+          { title: 'Birth Year', field: 'birthYear', type: 'numeric' },
+          {
+            title: 'Birth Place',
+            field: 'birthCity',
+            lookup: { 34: 'İstanbul', 63: 'Şanlıurfa' },
+          },
+        ],
+        data: [
+          { name: 'Mehmet', surname: 'Baran', birthYear: 1987, birthCity: 63 },
+          {
+            name: 'Zerya Betül',
+            surname: 'Baran',
+            birthYear: 2017,
+            birthCity: 34,
+          },
+        ],
+      });
+      console.log(state);
+      return (
+        <div>
+            <div style={{ maxWidth: "100%" }}>
+        <MaterialUI.Table
+          columns={[
+            { title: "Adı", field: "name" },
+            { title: "Soyadı", field: "surname" },
+            { title: "Doğum Yılı", field: "birthYear", type: "numeric" },
+            {
+              title: "Doğum Yeri",
+              field: "birthCity",
+              lookup: { 34: "İstanbul", 63: "Şanlıurfa" }
+            }
+          ]}
+          data={[
+            { name: "Mehmet", surname: "Baran", birthYear: 1987, birthCity: 63 }
+          ]}
+          title="Demo Title"
+        />
+      </div>
+        </div>
+      );
+     
 };
 
 const NavComponent = (props) => {
@@ -174,3 +237,33 @@ const SendComponent = (props) => {
     </div>
     );
 };
+
+/**
+ * const handleChange = (e, index) => {
+    setValues([
+      ...values.slice(0, index),
+      { ...values[index], [e.target.name]: e.target.value },
+      ...values.slice(index + 1),
+    ])
+  }
+  values.map((node, index) => (
+{values ? (
+          values.map((node, index) => (<TextField
+                      type="text"
+                      name="medicationName"
+                      label="Medication Name"
+                      variant="outlined"
+                      fullWidth
+                      value={node.medicationName}
+                      index={index}
+                      onChange={(e) => handleChange(e, index)}
+                      margin="normal"
+                      required
+                    />))
+        ) : (
+          <Typography variant="h3">
+            We do not have any medications listed for you.
+          </Typography>
+        )}
+
+ */

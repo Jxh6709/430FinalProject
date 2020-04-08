@@ -1,3 +1,6 @@
 {
-  "presets": ["@babel/env"]
+  "presets": ["@babel/env"],
+  "plugins": [
+    ["import", {"libraryName":"react"}]
+  ]
 }
