@@ -48,8 +48,24 @@ const getAllUsers = (request, response) => {
     if (err || !docs) {
       return res.status(404).json({ error: 'No Records Found' });
     }
-    const colReturn = [];
+    let colReturn = [{
+      title: "_id", field: "_id"
+    },
+    {
+      title: "username", field: "username"
+    },
+    {
+      title: "firstName", field: "firstName"
+    },
+    {
+      title: "lastName", field: "lastName"
+    },
+    {
+      title: "email", field: "email"
+    }
+    ];
     if (docs.length > 0) {
+      colReturn = [];
       const cols = Object.keys(docs[0]);
 
       cols.forEach((col) => {
@@ -91,7 +107,6 @@ const addUser = (request, response) => {
     const savePromise = newAccount.save();
 
     savePromise.then(() => {
-      req.session.account = Account.AccountModel.toAPI(newAccount);
       return res.json({ success: `${newData.username} has been created` });
     });
 
