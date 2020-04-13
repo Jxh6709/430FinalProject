@@ -51,12 +51,12 @@ const getAllUsers = (request, response) => {
     const colReturn = [];
     if (docs.length > 0) {
       const cols = Object.keys(docs[0]);
-    
-       cols.forEach((col) => {
-          colReturn.push({ title: col, field: col });
-        });
+
+      cols.forEach((col) => {
+        colReturn.push({ title: col, field: col });
+      });
     }
-    
+
     return res.json({ users: docs, cols: colReturn });
   });
 };

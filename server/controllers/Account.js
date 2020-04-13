@@ -1,13 +1,12 @@
 const models = require('../models');
-const UserPage = require('./usersPage');
 
 const { Account } = models;
 
 const loginPage = (req, res) => {
-  //setting up if no users
-  Account.AccountModel.getUsers(null,(err,docs) => {
+  // setting up if no users
+  Account.AccountModel.getUsers(null, (err, docs) => {
     if (err) console.log(err);
-    //if no current users
+    // if no current users
     if (docs.length === 0) {
       Account.AccountModel.generateHash('password', (salt, hash) => {
         const defaultUser = {
@@ -16,7 +15,7 @@ const loginPage = (req, res) => {
           password: hash,
           firstName: 'John',
           lastName: 'Smith',
-          email: '1@1.com'
+          email: '1@1.com',
         };
         const newAccount = new Account.AccountModel(defaultUser);
         newAccount.save();
