@@ -17,9 +17,7 @@ function _typeof(obj) {
   return _typeof(obj);
 }
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+var exports = {"__esModule": true};
 exports.SendComponent = exports.NavComponent = exports.ProfileComponent = exports.GenTable = void 0;
 
 var _react = _interopRequireWildcard(require("react"));
