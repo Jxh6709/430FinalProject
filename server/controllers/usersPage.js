@@ -48,12 +48,15 @@ const getAllUsers = (request, response) => {
     if (err || !docs) {
       return res.status(404).json({ error: 'No Records Found' });
     }
-
-    const cols = Object.keys(docs[0]);
     const colReturn = [];
-    cols.forEach((col) => {
-      colReturn.push({ title: col, field: col });
-    });
+    if (docs.length > 0) {
+      const cols = Object.keys(docs[0]);
+    
+       cols.forEach((col) => {
+          colReturn.push({ title: col, field: col });
+        });
+    }
+    
     return res.json({ users: docs, cols: colReturn });
   });
 };

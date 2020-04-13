@@ -8,15 +8,19 @@ const loginPage = (req, res) => {
   Account.AccountModel.getUsers(null,(err,docs) => {
     if (err) console.log(err);
     //if no current users
-    if (!docs) {
-      const defaultUser = {
-        username: 'abcd',
-        firstName: 'John',
-        lastName: 'Smith',
-        email: '1@1.com'
-      };
-      req.body.newData = defaultUser;
-      UserPage.addUser(req,res);
+    if (docs.length === 0) {
+      Account.AccountModel.generateHash('password', (salt, hash) => {
+        const defaultUser = {
+          username: 'abcd',
+          salt,
+          password: hash,
+          firstName: 'John',
+          lastName: 'Smith',
+          email: '1@1.com'
+        };
+        const newAccount = new Account.AccountModel(defaultUser);
+        newAccount.save();
+      });
     }
   });
 
