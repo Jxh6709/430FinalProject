@@ -1,8 +1,25 @@
 const models = require('../models');
+const UserPage = require('./usersPage');
 
 const { Account } = models;
 
 const loginPage = (req, res) => {
+  //setting up if no users
+  Account.AccountModel.getUsers(null,(err,docs) => {
+    if (err) console.log(err);
+    //if no current users
+    if (!docs) {
+      const defaultUser = {
+        username: 'abcd',
+        firstName: 'John',
+        lastName: 'Smith',
+        email: '1@1.com'
+      };
+      req.body.newData = defaultUser;
+      UserPage.addUser(req,res);
+    }
+  });
+
   res.render('login', { csrfToken: req.csrfToken(), title: 'Contract Solutions' });
 };
 
