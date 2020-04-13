@@ -49,20 +49,20 @@ const getAllUsers = (request, response) => {
       return res.status(404).json({ error: 'No Records Found' });
     }
     let colReturn = [{
-      title: "_id", field: "_id"
+      title: '_id', field: '_id',
     },
     {
-      title: "username", field: "username"
+      title: 'username', field: 'username',
     },
     {
-      title: "firstName", field: "firstName"
+      title: 'firstName', field: 'firstName',
     },
     {
-      title: "lastName", field: "lastName"
+      title: 'lastName', field: 'lastName',
     },
     {
-      title: "email", field: "email"
-    }
+      title: 'email', field: 'email',
+    },
     ];
     if (docs.length > 0) {
       colReturn = [];
@@ -106,9 +106,7 @@ const addUser = (request, response) => {
 
     const savePromise = newAccount.save();
 
-    savePromise.then(() => {
-      return res.json({ success: `${newData.username} has been created` });
-    });
+    savePromise.then(() => res.json({ success: `${newData.username} has been created` }));
 
     savePromise.catch((err) => {
       if (err.code === 11000) {
