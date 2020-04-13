@@ -1,115 +1,6 @@
-import React, {useEffect} from 'react';
-import MaterialTable from 'material-table';
-import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
-import {sendAjax} from './index';
+import MaterialTable from '../../node_modules/@material-ui/core/Table';
 
-
-const yayToast = (msg) => {
-    toast.success(msg, {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true
-    }); 
-};
-
-export const GenTable = (props) => { 
-  axios.defaults.headers.common['X-CSRF-Token'] =  props.csrf; 
-  const notify = (msg) => {toast(msg)};
-  toast.configure()
-
-  useEffect(()=> {
-    axios.get(props.getURL)
-        .then(res => {
-        const persons = res.data.users;
-        const colNames = res.data.cols;
-
-        setState({columns: colNames, data: persons}); 
-    });
-  },[]);  
-  //the pieces of our table
-  const [state, setState] = React.useState({
-    columns: [
-    ],
-    data: [
-    ]
-  });
-
-  return (
-      <div>
-        <MaterialTable
-      title="All Users"
-      columns={state.columns}
-      data={state.data}
-      editable={{
-        onRowAdd: (newData) =>
-          new Promise((resolve) => {
-            setTimeout(() => {
-              resolve();
-              setState((prevState) => {
-                const data = [...prevState.data];
-                //make the call
-                sendAjax('POST',props.postURL,{newData,_csrf: props.csrf}, (res) => {
-                    if (res) {
-                        yayToast(`User ${newData.username} has been created!`); 
-                    }
-                });
-                //locally push
-                data.push(newData);
-                return { ...prevState, data};
-              });
-            }, 600);
-          }),
-        onRowUpdate: (newData, oldData) =>
-          new Promise((resolve) => {
-            setTimeout(() => {
-              resolve();
-              if (oldData) {
-                setState((prevState) => {
-                    //up up and away
-                    sendAjax('PUT',props.putURL,{newData,_csrf: props.csrf}, (res) => {
-                        yayToast(`User ${newData.username} has been updated!`);
-                    }); 
-                    //replace locally
-                  const data = [...prevState.data];
-                  data[data.indexOf(oldData)] = newData;
-                  return { ...prevState, data };
-                });
-              }
-            }, 600);
-          }),
-        onRowDelete: (oldData) =>
-          new Promise((resolve) => {
-            setTimeout(() => {
-              resolve();
-              setState((prevState) => {
-                  //out with the old
-                sendAjax('DELETE',props.deleteURL,{oldData,_csrf: props.csrf}, (res) => {
-                    //bye bye
-                    if (res) {
-                        yayToast(`User ${oldData.username} has been deleted!`); 
-                    }
-                }); 
-                //remove from table
-                const data = [...prevState.data];
-                data.splice(data.indexOf(oldData), 1);
-                return { ...prevState, data };
-              });
-            }, 600);
-          }),
-      }}
-    />
-    <ToastContainer />
-      </div> 
-  );
-}
-
-
-
-export const ProfileComponent = (props) => {
+const ProfileComponent = (props) => {
     const {firstName,lastName, email} = props.user; 
     const [values, setValues] = React.useState({
         firstName, lastName, email
@@ -122,21 +13,14 @@ export const ProfileComponent = (props) => {
         e.preventDefault();
         setValues({firstName, lastName, email})
     }
-    const handleUpdate = (e) => {
-        e.preventDefault();
-        const newData = {
-            firstName: values.firstName,
-            lastName: values.lastName,
-            email: values.email
-        };
-        console.log(newData);
-        sendAjax('PUT','/updateUser',{newData,_csrf:props.csrf},() => {
-            yayToast(`${newData.firstName} ${newData.lastName} has been updated`);
-        });
-    }
     return (
         <div>
             <div className="container profile profile-view" id="profile">
+                <div className="row">
+                    <div className="col-md-12 alert-col relative">
+                        <div className="alert alert-info absolue center" role="alert"><button type="button" className="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button><span>Profile save with success</span></div>
+                    </div>
+                </div>
                 <form>
                     <div className="form-row profile-row">
                         <div className="col-md-4 relative">
@@ -147,7 +31,7 @@ export const ProfileComponent = (props) => {
                             <input type="file" className="form-control" name="avatar-file"/>
                         </div>
                         <div className="col-md-8">
-                            
+                            <h1>Your Name Here</h1>
                             <hr/>
                             <div className="form-row">
                                 <div className="col-sm-12 col-md-6">
@@ -168,20 +52,101 @@ export const ProfileComponent = (props) => {
                             </div> */}
                             <hr/>
                             <div className="form-row">
-                                <div className="col-md-12 content-right"><button className="btn btn-primary form-btn" onClick={handleUpdate}>SAVE </button><button className="btn btn-info form-btn" onClick={reset} >UNDO </button></div>
+                                <div className="col-md-12 content-right"><button className="btn btn-primary form-btn" onClick={() => {updateUser(user)}}>SAVE </button><button className="btn btn-info form-btn" onClick={reset} >UNDO </button></div>
                             </div>
                         </div>
                     </div>
                 </form>
-            </div> 
-            <GenTable csrf={props.csrf} getURL="/getUsers" postURL="/addUser" putURL="/updateUser" deleteURL="deleteUser"/>
-            
+            </div>
+            <div className="col-md-12 search-table-col mtFive"><button className="btn btn-primary">Import From Excel File</button>
+                <div className="table-responsive table-bordered table table-hover table-bordered results">
+                    <table className="table table-bordered table-hover">
+                        <thead className="bill-header cs">
+                            <tr className="autoWidth">
+                                <th id="trs-hd" className="col-lg-2">Username</th>
+                                <th id="trs-hd" className="col-lg-2">Password</th>
+                                <th id="trs-hd-5" className="col-lg-2">Name</th>
+                                <th id="trs-hd-4" className="col-lg-2">Email</th>
+                                <th id="trs-hd-15" className="col-lg-1">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr className="warning no-result">
+                                <td colSpan="12"><i className="fa fa-warning"></i>&nbsp; No Result !!!</td>
+                            </tr>
+                            <tr>
+                                <td>Bootstrap Stuido</td>
+                                <td>2014</td>
+                                <td>2014</td>
+                                <td>2014</td>
+                                <td><button className="btn btn-success mlFive" type="submit"><i className="fa fa-check fsFifteen" ></i></button><button className="btn btn-danger mlFive" type="submit"><i className="fa fa-trash fsFifteen"></i></button></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" /></td>
+                                <td><input type="text" /></td>
+                                <td><input type="text" /></td>
+                                <td><input type="text" /></td>
+                                <td><button className="btn btn-success mlFive"  type="submit"><i className="fa fa-check fsFifteen"></i></button><button className="btn btn-danger mlFive" type="submit"><i className="fa fa-trash fsFifteen"></i></button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     )
 };
 
 
-export const NavComponent = (props) => {
+const TestTable = (props) => {
+    
+    const [state, setState] = React.useState({
+        columns: [
+          { title: 'Name', field: 'name' },
+          { title: 'Surname', field: 'surname' },
+          { title: 'Birth Year', field: 'birthYear', type: 'numeric' },
+          {
+            title: 'Birth Place',
+            field: 'birthCity',
+            lookup: { 34: 'İstanbul', 63: 'Şanlıurfa' },
+          },
+        ],
+        data: [
+          { name: 'Mehmet', surname: 'Baran', birthYear: 1987, birthCity: 63 },
+          {
+            name: 'Zerya Betül',
+            surname: 'Baran',
+            birthYear: 2017,
+            birthCity: 34,
+          },
+        ],
+      });
+      console.log(state);
+      return (
+        <div>
+            <div style={{ maxWidth: "100%" }}>
+        <MaterialTable
+          columns={[
+            { title: "Adı", field: "name" },
+            { title: "Soyadı", field: "surname" },
+            { title: "Doğum Yılı", field: "birthYear", type: "numeric" },
+            {
+              title: "Doğum Yeri",
+              field: "birthCity",
+              lookup: { 34: "İstanbul", 63: "Şanlıurfa" }
+            }
+          ]}
+          data={[
+            { name: "Mehmet", surname: "Baran", birthYear: 1987, birthCity: 63 }
+          ]}
+          title="Demo Title"
+        />
+      </div>
+        </div>
+      );
+     
+};
+
+const NavComponent = (props) => {
     return (
         <div>
             <nav className="navbar navbar-light navbar-expand-md sticky-top navigation-clean-button navStyles">
@@ -203,7 +168,7 @@ export const NavComponent = (props) => {
     )
 };
 
-export const SendComponent = (props) => {
+const SendComponent = (props) => {
     return (
         <div>
             <section id="contact" className="sendStyles">
@@ -273,7 +238,6 @@ export const SendComponent = (props) => {
     </div>
     );
 };
-
 
 /**
  * const handleChange = (e, index) => {

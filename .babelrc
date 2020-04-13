@@ -1,6 +1,6 @@
 {
   "presets": ["@babel/env"],
   "plugins": [
-    ["import", {"libraryName":"react"}]
+    ["import", {"libraryName":"@material-ui/core", "libraryDirectory" : "components", "camerl2DashComponentName":false}]
   ]
 }

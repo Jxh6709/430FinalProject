@@ -6,16 +6,18 @@ const router = (app) => {
   app.get('/getToken', mid.requiresSecure, controllers.Account.getToken);
   app.get('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
   app.post('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.login);
-  app.post('/signup', mid.requiresSecure, mid.requiresLogout, controllers.Account.signup);
   app.get('/logout', mid.requiresLogin, controllers.Account.logout);
 
   app.get('/app', mid.requiresSecure, mid.requiresLogin, controllers.MainApp.profilePage);
-  
-  app.post('/setComponent',mid.requiresLogin, controllers.MainApp.setActiveComponent);
-  app.get('/getComponent',mid.requiresLogin,controllers.MainApp.getActiveComponent);
 
-  app.get('/getUserInfo',mid.requiresLogin, controllers.UserPage.getInfo);
-  app.put('/updateUser',mid.requiresLogin,controllers.UserPage.updateUser);
+  app.post('/setComponent', mid.requiresLogin, controllers.MainApp.setActiveComponent);
+  app.get('/getComponent', mid.requiresLogin, controllers.MainApp.getActiveComponent);
+
+  app.get('/getUserInfo', mid.requiresLogin, controllers.UserPage.getInfo);
+  app.put('/updateUser', mid.requiresLogin, controllers.UserPage.updateUser);
+  app.post('/addUser', mid.requiresLogin, mid.requiresSecure, controllers.UserPage.addUser);
+  app.delete('/deleteUser', mid.requiresLogin, mid.requiresSecure, controllers.UserPage.deleteUser);
+  app.get('/getUsers', mid.requiresSecure, controllers.UserPage.getUsers);
 
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
 };

@@ -12,78 +12,49 @@ var handleLogin = function handleLogin(e) {
 var LoginWindow = function LoginWindow(props) {
   var _React$createElement;
 
-  return (
-    /*#__PURE__*/
-    React.createElement("div", null,
-    /*#__PURE__*/
-    React.createElement("div", {
-      className: "login-dark"
-    },
-    /*#__PURE__*/
-    React.createElement("form", (_React$createElement = {
-      method: "post",
-      id: "loginForm",
-      name: "loginForm",
-      action: "/login"
-    }, _defineProperty(_React$createElement, "method", "POST"), _defineProperty(_React$createElement, "onSubmit", handleLogin), _React$createElement),
-    /*#__PURE__*/
-    React.createElement("div", {
-      className: "illustration"
-    },
-    /*#__PURE__*/
-    React.createElement("i", {
-      className: "icon ion-ios-locked-outline"
-    })),
-    /*#__PURE__*/
-    React.createElement("div", {
-      className: "form-group"
-    },
-    /*#__PURE__*/
-    React.createElement("input", {
-      className: "form-control",
-      type: "text",
-      name: "username",
-      placeholder: "Username"
-    })),
-    /*#__PURE__*/
-    React.createElement("div", {
-      className: "form-group"
-    },
-    /*#__PURE__*/
-    React.createElement("input", {
-      className: "form-control",
-      type: "password",
-      name: "pass",
-      placeholder: "Password"
-    })),
-    /*#__PURE__*/
-    React.createElement("input", {
-      type: "hidden",
-      name: "_csrf",
-      value: props.csrf
-    }),
-    /*#__PURE__*/
-    React.createElement("div", {
-      className: "form-group"
-    },
-    /*#__PURE__*/
-    React.createElement("button", {
-      className: "btn btn-primary btn-block",
-      type: "submit"
-    }, "Log In")),
-    /*#__PURE__*/
-    React.createElement("a", {
-      className: "forgot",
-      href: "#"
-    }, "Forgot your email or password?"))))
-  );
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "login-dark"
+  }, /*#__PURE__*/React.createElement("form", (_React$createElement = {
+    method: "post",
+    id: "loginForm",
+    name: "loginForm",
+    action: "/login"
+  }, _defineProperty(_React$createElement, "method", "POST"), _defineProperty(_React$createElement, "onSubmit", handleLogin), _React$createElement), /*#__PURE__*/React.createElement("div", {
+    className: "illustration"
+  }, /*#__PURE__*/React.createElement("i", {
+    className: "icon ion-ios-locked-outline"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "form-group"
+  }, /*#__PURE__*/React.createElement("input", {
+    className: "form-control",
+    type: "text",
+    name: "username",
+    placeholder: "Username"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "form-group"
+  }, /*#__PURE__*/React.createElement("input", {
+    className: "form-control",
+    type: "password",
+    name: "pass",
+    placeholder: "Password"
+  })), /*#__PURE__*/React.createElement("input", {
+    type: "hidden",
+    name: "_csrf",
+    value: props.csrf
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "form-group"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary btn-block",
+    type: "submit"
+  }, "Log In")), /*#__PURE__*/React.createElement("a", {
+    className: "forgot",
+    href: "#"
+  }, "Forgot your email or password?"))));
 };
 
 var createLoginWindow = function createLoginWindow(csrf) {
   console.log(csrf);
-  ReactDOM.render(
-  /*#__PURE__*/
-  React.createElement(LoginWindow, {
+  ReactDOM.render( /*#__PURE__*/React.createElement(LoginWindow, {
     csrf: csrf
   }), document.querySelector('#content'));
 };

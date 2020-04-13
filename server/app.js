@@ -21,6 +21,7 @@ const dbURL = process.env.MONGODB_URI || 'mongodb://localhost/430FinaL';
 const mongooseOptions = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  useFindAndModify: false,
 };
 
 mongoose.connect(dbURL, mongooseOptions, (err) => {

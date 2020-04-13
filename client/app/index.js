@@ -1,11 +1,40 @@
+import {NavComponent, ProfileComponent, TestTable, SendComponent} from './components';
+import ReactDOM from 'react-dom';
+import React from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+
+export const sendAjax = (type, action, data, success) => {
+    toast.configure();
+    console.log (`${type} ${action} ${data} `);
+      $.ajax({
+        cache: false,
+        type: type,
+        url: action,
+        data: data,
+        dataType: "json",
+        success: success,
+        error: (xhr, status, error) => {
+          const messageObj = JSON.parse(xhr.responseText);
+          toast.error(messageObj.error, {
+            position: "top-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true
+            }); 
+        }
+      });        
+}
+
 const createProfileWindow = (csrf) => {
     sendAjax('GET','/getUserInfo',null, (res) => {
         //console.log(res);
         const user = (res.error || !res.username) ? null : res;
-        ReactDOM.render(
-            <TestTable children={"null"}/>,
-            document.querySelector('#test')
-        );
+        // ReactDOM.render(
+        //     <TestTable children={{render: 'div'}} />,
+        //     document.querySelector('#test')
+        // );
         ReactDOM.render(
             <ProfileComponent csrf={csrf} user={user}/>,
             document.querySelector('#content')

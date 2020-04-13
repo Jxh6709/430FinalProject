@@ -27,11 +27,11 @@ const AccountSchema = new mongoose.Schema({
   },
   firstName: {
     required: true,
-    type: String
+    type: String,
   },
   lastName: {
     required: true,
-    type: String
+    type: String,
   },
   email: {
     type: mongoose.SchemaTypes.Email,
@@ -40,7 +40,7 @@ const AccountSchema = new mongoose.Schema({
   isAdmin: {
     type: Boolean,
     required: false,
-    default: false
+    default: false,
   },
   createdDate: {
     type: Date,
@@ -100,20 +100,15 @@ AccountSchema.statics.authenticate = (username, password, callback) => {
 };
 
 AccountSchema.statics.updateUser = (id, userObj, callback) => {
-  AccountModel.findOneAndUpdate(id,userObj, {
-    new: true
-  }, (err, res) => {
-    if (err) {
-      return callback({error: err});
-    }
-
-    return callback(res);
-  });
+  AccountModel.findOneAndUpdate(id, userObj, {
+    new: true,
+  }, callback);
 };
 
-AccountSchema.statics.getAllUsers = (callback) => {
-  return AccountModel.find({});
-};
+AccountSchema.statics.getUsers = (id, callback) => AccountModel.find({}).where('_id').ne(id).select('username email firstName lastName')
+  .lean()
+  .exec(callback);
+
 
 AccountModel = mongoose.model('Account', AccountSchema);
 
