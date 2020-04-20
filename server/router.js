@@ -19,6 +19,11 @@ const router = (app) => {
   app.delete('/deleteUser', mid.requiresLogin, mid.requiresSecure, controllers.UserPage.deleteUser);
   app.get('/getUsers', mid.requiresSecure, controllers.UserPage.getUsers);
 
+  app.get('/getFaculty', mid.requiresLogin, mid.requiresSecure, controllers.Faculty.getAllFaculty);
+  app.put('/updateFaculty', mid.requiresLogin, mid.requiresSecure, controllers.Faculty.updateFaculty);
+  app.post('/addFaculty', mid.requiresLogin, mid.requiresSecure, controllers.Faculty.addFaculty);
+  app.delete('/deleteFaculty', mid.requiresLogin, mid.requiresSecure, controllers.Faculty.deleteFaculty);
+
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
 };
 

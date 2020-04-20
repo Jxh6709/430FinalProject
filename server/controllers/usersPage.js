@@ -1,14 +1,10 @@
 const models = require('../models');
 
+const helpers = require('./helpers');
+
+
 const { Account } = models;
 
-// https://www.w3resource.com/javascript/form/email-validation.php
-const confirmMail = (mail) => {
-  if (/^\w+([-]?\w+)*@\w+([-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
-    return (true);
-  }
-  return (false);
-};
 
 const getInfo = (request, response) => {
   const req = request;
@@ -48,32 +44,9 @@ const getAllUsers = (request, response) => {
     if (err || !docs) {
       return res.status(404).json({ error: 'No Records Found' });
     }
-    let colReturn = [{
-      title: '_id', field: '_id',
-    },
-    {
-      title: 'username', field: 'username',
-    },
-    {
-      title: 'firstName', field: 'firstName',
-    },
-    {
-      title: 'lastName', field: 'lastName',
-    },
-    {
-      title: 'email', field: 'email',
-    },
-    ];
-    if (docs.length > 0) {
-      colReturn = [];
-      const cols = Object.keys(docs[0]);
+    const schema = helpers.buildTableStructureFromSchema(Account.AccountSchema);
 
-      cols.forEach((col) => {
-        colReturn.push({ title: col, field: col });
-      });
-    }
-
-    return res.json({ users: docs, cols: colReturn });
+    return res.json({ data: docs, cols: schema });
   });
 };
 
@@ -88,7 +61,7 @@ const addUser = (request, response) => {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
-  if (!confirmMail(newData.email)) {
+  if (!helpers.confirmMail(newData.email)) {
     return res.status(400).json({ error: 'Invalid Email Address' });
   }
 

@@ -225,17 +225,11 @@ var yayToast = function yayToast(msg) {
 };
 
 var GenTable = function GenTable(props) {
-  _axios["default"].defaults.headers.common['X-CSRF-Token'] = props.csrf;
-
-  var notify = function notify(msg) {
-    (0, _reactToastify.toast)(msg);
-  };
-
   _reactToastify.toast.configure();
 
   (0, _react.useEffect)(function () {
     _axios["default"].get(props.getURL).then(function (res) {
-      var persons = res.data.users;
+      var persons = res.data.data;
       var colNames = res.data.cols;
       setState({
         columns: colNames,
@@ -253,7 +247,7 @@ var GenTable = function GenTable(props) {
       setState = _React$useState2[1];
 
   return /*#__PURE__*/_react["default"].createElement("div", null, /*#__PURE__*/_react["default"].createElement(_materialTable["default"], {
-    title: "All Users",
+    title: props.title,
     columns: state.columns,
     data: state.data,
     editable: {
@@ -270,7 +264,8 @@ var GenTable = function GenTable(props) {
                 _csrf: props.csrf
               }, function (res) {
                 if (res) {
-                  yayToast("User ".concat(newData.username, " has been created!"));
+                  //yayToast(`User ${newData.username} has been created!`); 
+                  yayToast('Successful creation');
                 }
               }); //locally push
 
@@ -294,7 +289,8 @@ var GenTable = function GenTable(props) {
                   newData: newData,
                   _csrf: props.csrf
                 }, function (res) {
-                  yayToast("User ".concat(newData.username, " has been updated!"));
+                  //yayToast(`User ${newData.username} has been updated!`);
+                  yayToast('Successful Update');
                 }); //replace locally
 
                 var data = _toConsumableArray(prevState.data);
@@ -320,7 +316,8 @@ var GenTable = function GenTable(props) {
               }, function (res) {
                 //bye bye
                 if (res) {
-                  yayToast("User ".concat(oldData.username, " has been deleted!"));
+                  //yayToast(`User ${oldData.username} has been deleted!`); 
+                  yayToast('Successful Delete');
                 }
               }); //remove from table
 
@@ -442,6 +439,7 @@ var ProfileComponent = function ProfileComponent(props) {
     className: "btn btn-info form-btn",
     onClick: reset
   }, "UNDO "))))))), /*#__PURE__*/_react["default"].createElement(GenTable, {
+    title: "Other Users",
     csrf: props.csrf,
     getURL: "/getUsers",
     postURL: "/addUser",
@@ -504,7 +502,8 @@ var NavComponent = function NavComponent(props) {
     className: "nav-item",
     role: "presentation"
   }, /*#__PURE__*/_react["default"].createElement("a", {
-    className: "nav-link text-white",
+    id: "facultyNav",
+    className: "nav-link text-white ".concat(props.activePage === 'faculty' ? "activePage" : ""),
     href: "#"
   }, /*#__PURE__*/_react["default"].createElement("i", {
     className: "fa fa-user-circle-o"
@@ -768,6 +767,19 @@ var createSendWindow = function createSendWindow(csrf) {
   }), document.querySelector('#content'));
 };
 
+var createFacultyWindow = function createFacultyWindow(csrf) {
+  createNavWindow(csrf, "faculty");
+
+  _reactDom["default"].render( /*#__PURE__*/_react["default"].createElement(_components.GenTable, {
+    title: "All Faculty",
+    csrf: csrf,
+    getURL: "/getFaculty",
+    postURL: "/addFaculty",
+    putURL: "/updateFaculty",
+    deleteURL: "deleteFaculty"
+  }), document.querySelector('#content'));
+};
+
 var setup = function setup(csrf) {
   //getting the active component which will tell us which component to load on init
   sendAjax('GET', '/getComponent', null, function (res) {
@@ -791,6 +803,7 @@ var setup = function setup(csrf) {
 
     var sendButton = document.querySelector("#sendNav");
     var profileButton = document.querySelector("#profileNav");
+    var facultyButton = document.querySelector("#facultyNav");
     sendButton.addEventListener('click', function (e) {
       e.preventDefault();
       createSendWindow(csrf);
@@ -799,6 +812,11 @@ var setup = function setup(csrf) {
     profileButton.addEventListener('click', function (e) {
       e.preventDefault();
       createProfileWindow(csrf);
+      return false;
+    });
+    facultyButton.addEventListener('click', function (e) {
+      e.preventDefault();
+      createFacultyWindow(csrf);
       return false;
     });
   });

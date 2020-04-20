@@ -1,4 +1,4 @@
-import {NavComponent, ProfileComponent, TestTable, SendComponent} from './components';
+import {NavComponent, ProfileComponent, GenTable, SendComponent} from './components';
 import ReactDOM from 'react-dom';
 import React from 'react';
 import { ToastContainer, toast } from 'react-toastify';
@@ -60,6 +60,15 @@ const createSendWindow = (csrf) => {
     );
 };
 
+const createFacultyWindow = (csrf) => {
+    createNavWindow(csrf, "faculty");
+    ReactDOM.render(
+        <GenTable title ="All Faculty" csrf={csrf} getURL="/getFaculty" postURL="/addFaculty" putURL="/updateFaculty" deleteURL="deleteFaculty"/>,
+        document.querySelector('#content')
+
+    )
+}
+
 const setup = (csrf) => {
 
     //getting the active component which will tell us which component to load on init
@@ -83,6 +92,7 @@ const setup = (csrf) => {
             //set up the nav
         const sendButton = document.querySelector("#sendNav");
         const profileButton = document.querySelector("#profileNav"); 
+        const facultyButton = document.querySelector("#facultyNav"); 
 
         sendButton.addEventListener('click', (e) => {
             e.preventDefault();
@@ -92,6 +102,11 @@ const setup = (csrf) => {
         profileButton.addEventListener('click', (e) => {
             e.preventDefault();
             createProfileWindow(csrf);
+            return false;
+        });
+        facultyButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            createFacultyWindow(csrf);
             return false;
         });
     });

@@ -17,14 +17,12 @@ const yayToast = (msg) => {
 };
 
 export const GenTable = (props) => { 
-  axios.defaults.headers.common['X-CSRF-Token'] =  props.csrf; 
-  const notify = (msg) => {toast(msg)};
   toast.configure()
 
   useEffect(()=> {
     axios.get(props.getURL)
         .then(res => {
-        const persons = res.data.users;
+        const persons = res.data.data;
         const colNames = res.data.cols;
 
         setState({columns: colNames, data: persons}); 
@@ -41,7 +39,7 @@ export const GenTable = (props) => {
   return (
       <div>
         <MaterialTable
-      title="All Users"
+      title={props.title}
       columns={state.columns}
       data={state.data}
       editable={{
@@ -54,7 +52,8 @@ export const GenTable = (props) => {
                 //make the call
                 sendAjax('POST',props.postURL,{newData,_csrf: props.csrf}, (res) => {
                     if (res) {
-                        yayToast(`User ${newData.username} has been created!`); 
+                        //yayToast(`User ${newData.username} has been created!`); 
+                        yayToast('Successful creation');
                     }
                 });
                 //locally push
@@ -71,7 +70,8 @@ export const GenTable = (props) => {
                 setState((prevState) => {
                     //up up and away
                     sendAjax('PUT',props.putURL,{newData,_csrf: props.csrf}, (res) => {
-                        yayToast(`User ${newData.username} has been updated!`);
+                        //yayToast(`User ${newData.username} has been updated!`);
+                        yayToast('Successful Update');
                     }); 
                     //replace locally
                   const data = [...prevState.data];
@@ -90,7 +90,8 @@ export const GenTable = (props) => {
                 sendAjax('DELETE',props.deleteURL,{oldData,_csrf: props.csrf}, (res) => {
                     //bye bye
                     if (res) {
-                        yayToast(`User ${oldData.username} has been deleted!`); 
+                        //yayToast(`User ${oldData.username} has been deleted!`); 
+                        yayToast('Successful Delete');
                     }
                 }); 
                 //remove from table
@@ -174,7 +175,7 @@ export const ProfileComponent = (props) => {
                     </div>
                 </form>
             </div> 
-            <GenTable csrf={props.csrf} getURL="/getUsers" postURL="/addUser" putURL="/updateUser" deleteURL="deleteUser"/>
+            <GenTable title ="Other Users" csrf={props.csrf} getURL="/getUsers" postURL="/addUser" putURL="/updateUser" deleteURL="deleteUser"/>
             
         </div>
     )
@@ -192,7 +193,7 @@ export const NavComponent = (props) => {
                             <li className="nav-item" role="presentation"><a id="sendNav" className={`nav-link text-white ${props.activePage === 'send' ? "activePage" : ""}`}  href="#"><i className="fa fa-home"></i>&nbsp;Send</a></li>
                             <li className="nav-item" role="presentation"><a className="nav-link text-white" href="#"><i className="fa fa-wpexplorer"></i>&nbsp;Preview</a></li>
                             <li className="nav-item" role="presentation"><a className="nav-link text-white" href="#"><i className="fa fa-star-o"></i>&nbsp;Semesters</a></li>
-                            <li className="nav-item" role="presentation"><a className="nav-link text-white" href="#"><i className="fa fa-user-circle-o"></i>&nbsp;Faculty</a></li>
+                            <li className="nav-item" role="presentation"><a id = "facultyNav" className={`nav-link text-white ${props.activePage === 'faculty' ? "activePage" : ""}`} href="#"><i className="fa fa-user-circle-o"></i>&nbsp;Faculty</a></li>
                             <li className="nav-item" role="presentation"><a id = "profileNav" className={`nav-link text-white ${props.activePage === 'profile' ? "activePage" : ""}`} href="#"><i className="icon ion-person"></i>&nbsp;Your Account</a></li>
                             <li className="nav-item" role="presentation"><a className="nav-link text-white" href="/logout"><i className="icon ion-log-out"></i>&nbsp;Logout</a></li>
                         </ul>
