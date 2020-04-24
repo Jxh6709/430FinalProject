@@ -59,7 +59,7 @@ const PasswordChangeWindow = (props) => {
                     <div className="form-group"><input className = "form-control" type="password" name="newpass1" placeholder="New Password" /></div>
                     <div className="form-group"><input className = "form-control" type="password" name="newpass2" placeholder="Confirm New Password" /></div>
                     <input type="hidden" name="_csrf" value={props.csrf} />
-                    <div className="form-group"><button className = "btn btn-primary btn-block" type="submit">Log In</button></div>
+                    <div className="form-group"><button className = "btn btn-primary btn-block" type="submit">Submit</button></div>
                     <a onClick={returnToLogin} id="returnToLogin" className="forgot" href="#">Return To Login</a>
                 </form>
             </div>     
