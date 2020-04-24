@@ -18,8 +18,6 @@ export const booToast = (msg) => {
 
 export const sendAjax = (type, action, data, success) => {
     toast.configure();
-    console.log (`${type} ${action} `);
-    console.log(data);
       $.ajax({
         cache: false,
         type: type,
@@ -35,14 +33,10 @@ export const sendAjax = (type, action, data, success) => {
       });        
 }
 
-const createProfileWindow = (csrf) => {
+export const createProfileWindow = (csrf) => {
     sendAjax('GET','/getUserInfo',null, (res) => {
         //console.log(res);
         const user = (res.error || !res.username) ? null : res;
-        // ReactDOM.render(
-        //     <TestTable children={{render: 'div'}} />,
-        //     document.querySelector('#test')
-        // );
         ReactDOM.render(
             <ProfileComponent csrf={csrf} user={user}/>,
             document.querySelector('#content')
@@ -52,15 +46,14 @@ const createProfileWindow = (csrf) => {
     createNavWindow(csrf, "profile");
     
 };
-const createNavWindow = (csrf, activePage) => {
-    //setComponent(activePage, csrf);
+export const createNavWindow = (csrf, activePage) => {
     ReactDOM.render(
         <NavComponent csrf={csrf} activePage={activePage}/>,
         document.querySelector('#navContainer')
     );
 };
 
-const createSendWindow = (csrf) => {
+export const createSendWindow = (csrf) => {
     createNavWindow(csrf, "send");
     ReactDOM.render(
         <SendComponent csrf={csrf}/>,
@@ -68,7 +61,7 @@ const createSendWindow = (csrf) => {
     );
 };
 
-const createFacultyWindow = (csrf) => {
+export const createFacultyWindow = (csrf) => {
     createNavWindow(csrf, "faculty");
     ReactDOM.render(
         <GenTable title ="All Faculty" csrf={csrf} getURL="/getFaculty" postURL="/addFaculty" putURL="/updateFaculty" deleteURL="deleteFaculty"/>,
@@ -77,7 +70,7 @@ const createFacultyWindow = (csrf) => {
     )
 };
 
-const createPreviewWindow = (csrf) => {
+export const createPreviewWindow = (csrf) => {
     createNavWindow(csrf, "preview");
     ReactDOM.render(
         <PreviewComponent csrf="csrf"/>,
@@ -96,58 +89,41 @@ const createCoursesWindow = (csrf) => {
 };
 
 const setup = (csrf) => {
+    
+    createProfileWindow(csrf); //default
 
-    //getting the active component which will tell us which component to load on init
-    sendAjax('GET','/getComponent', null, (res) => {
-        console.log(res);
-        //default
-        if (res.error) {
-            createProfileWindow(csrf); //default
-        }
+    const sendButton = document.querySelector("#sendNav");
+    const profileButton = document.querySelector("#profileNav"); 
+    const facultyButton = document.querySelector("#facultyNav"); 
+    const courseButton = document.querySelector("#courseNav"); 
+    const previewButton = document.querySelector("#previewNav"); 
 
-        switch (res.activeComponent) {
-            case 'send':
-                createSendWindow(csrf);
-                break;
-            default:
-                console.log('fault')
-                createProfileWindow(csrf);
-                break;
-        }
-
-            //set up the nav
-        const sendButton = document.querySelector("#sendNav");
-        const profileButton = document.querySelector("#profileNav"); 
-        const facultyButton = document.querySelector("#facultyNav"); 
-        const courseButton = document.querySelector("#courseNav"); 
-        const previewButton = document.querySelector("#previewNav"); 
-
-        sendButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            createSendWindow(csrf);
-            return false;
-        });
-        profileButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            createProfileWindow(csrf);
-            return false;
-        });
-        facultyButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            createFacultyWindow(csrf);
-            return false;
-        });
-        courseButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            createCoursesWindow(csrf);
-            return false;
-        });
-        previewButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            createPreviewWindow(csrf);
-            return false;
-        });
+    sendButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        createSendWindow(csrf);
+        return false;
     });
+    profileButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        createProfileWindow(csrf);
+        return false;
+    });
+    facultyButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        createFacultyWindow(csrf);
+        return false;
+    });
+    courseButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        createCoursesWindow(csrf);
+        return false;
+    });
+    previewButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        createPreviewWindow(csrf);
+        return false;
+    });
+
 };
 
 const getToken = () => {
@@ -155,10 +131,6 @@ const getToken = () => {
         setup(res.csrfToken);
     });
 };
-
-const setComponent = (activePage, csrf) => {
-    sendAjax('POST','/setComponent', {activeComponent: activePage, _csrf: csrf}, (res) => {});
-}
 
 window.onload = () => {
     getToken();

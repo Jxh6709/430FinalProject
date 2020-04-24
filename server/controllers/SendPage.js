@@ -36,7 +36,7 @@ const getFacultyInfoAndMakeDocument = async (id, req, res, courseArr, courses) =
     const docBuffer = docMaker.docIt(docObj);
     const docName = `${info.lastName}, ${info.firstName} ${req.body.term}.docx`;
 
-    return { buffer: docBuffer, name: docName };
+    return { buffer: docBuffer, name: docName, email: info.email };
   } catch (e) {
     console.log(`could not get faculty info ${id}`);
     return res.status(500).json({ error: 'Something went wrong, please try again later.' });
@@ -88,8 +88,12 @@ const processId = async (id, req, res) => {
       if (!req.body.subject || !req.body.emailContent) {
         return res.status(400).json({ error: 'Subject and Email Content are required' });
       }
-      emailHandler.sendEmail({ subject: req.body.subject, content: req.body.emailContent },
-        doc.buffer, doc.name);
+      emailHandler.sendEmail({
+        subject: req.body.subject,
+        content: req.body.emailContent,
+        email: doc.email,
+      },
+      doc.buffer, doc.name);
     } else {
       // only downloading
       fs.writeFileSync(path.resolve(downFolder(), doc.name), doc.buffer);

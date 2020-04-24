@@ -1,11 +1,11 @@
 {
-  "name": "Logins",
+  "name": "final",
   "version": "1.0.0",
   "engines": {
     "node": "12.16.0",
     "npm": "6.13.7"
   },
-  "description": "A Simple Login Example using Node.js, Mongo and Redis",
+  "description": "igme 430 final project",
   "main": "./server/app.js",
   "scripts": {
     "buildLoginBundle": "babel ./client/login ./client/helper --presets @babel/preset-react --out-file ./hosted/loginBundle.js",
@@ -13,13 +13,12 @@
     "watchLoginBundle": "babel --watch ./client/login ./client/helper --presets @babel/preset-react --out-file ./hosted/loginBundle.js",
     "watchAppBundle": "babel --watch ./client/app ./client/helper --presets @babel/preset-react --out-file ./hosted/bundle.js",
     "nodemon": "nodemon --watch ./server ./server/app.js",
-    "build": "npm run buildBrow",
-    "buildWP": "webpack --mode production",
+    "build": "npm run buildBrow && buildLogin",
+    "watch": "npm run watchBrow && watchLogin",
     "buildBrow": "browserify -t [ babelify --presets [ @babel/preset-env @babel/preset-react ] ] ./client/app/components.js ./client/app/index.js ./client/app/previewComponent.js ./client/app/sendComponents.js -o ./hosted/bundle.js",
     "watchBrow": "watchify -t [ babelify --presets [ @babel/preset-env @babel/preset-react ] ] ./client/app/components.js ./client/app/index.js ./client/app/previewComponent.js ./client/app/sendComponents.js  -o ./hosted/bundle.js",
-    "watch": "gulp watch",
-    "buildSass": "node-sass --include-path scss ./scss/main.scss ./hosted/main.css",
-    "watchSass": "node-sass --watch --include-path scss ./scss/main.scss ./hosted/main.css",
+    "buildLogin": "browserify -t [ babelify --presets [ @babel/preset-env @babel/preset-react ] ] ./client/login/client.js ./client/app/index.js -o ./hosted/loginBundle.js",
+    "watchLogin": "watchify -t [ babelify --presets [ @babel/preset-env @babel/preset-react ] ] ./client/login/client.js ./client/app/index.js -o ./hosted/loginBundle.js",
     "start": "node ./server/app.js",
     "pretest": "eslint ./server --fix",
     "test": "echo \"Tests complete\""

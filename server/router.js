@@ -7,11 +7,9 @@ const router = (app) => {
   app.get('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
   app.post('/login', mid.requiresSecure, mid.requiresLogout, controllers.Account.login);
   app.get('/logout', mid.requiresLogin, controllers.Account.logout);
+  app.post('/changePassword', mid.requiresSecure, mid.requiresLogout, controllers.Account.changePassword);
 
   app.get('/app', mid.requiresSecure, mid.requiresLogin, controllers.MainApp.profilePage);
-
-  app.post('/setComponent', mid.requiresLogin, controllers.MainApp.setActiveComponent);
-  app.get('/getComponent', mid.requiresLogin, controllers.MainApp.getActiveComponent);
 
   app.get('/getUserInfo', mid.requiresLogin, controllers.UserPage.getInfo);
   app.put('/updateUser', mid.requiresLogin, controllers.UserPage.updateUser);
@@ -35,6 +33,7 @@ const router = (app) => {
   app.post('/handleContracts', mid.requiresLogin, mid.requiresSecure, controllers.SendPage.handleContracts);
 
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
+  app.get('/*', controllers.MainApp.notFound);
 };
 
 module.exports = router;

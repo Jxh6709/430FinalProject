@@ -100,6 +100,7 @@ AccountSchema.statics.authenticate = (username, password, callback) => {
 };
 
 AccountSchema.statics.updateUser = (id, userObj, callback) => {
+  console.log(id, userObj);
   AccountModel.findOneAndUpdate(id, userObj, {
     new: true,
   }, callback);
