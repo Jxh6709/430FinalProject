@@ -44,9 +44,11 @@ const getAllUsers = (request, response) => {
     if (err || !docs) {
       return res.status(404).json({ error: 'No Records Found' });
     }
-    const schema = helpers.buildTableStructureFromSchema(Account.AccountSchema);
-
-    return res.json({ data: docs, cols: schema });
+    let schema = null;
+    return helpers.buildTableStructureFromSchema(Account.AccountSchema).then((result) => {
+      schema = result;
+      return res.json({ data: docs, cols: schema });
+    });
   });
 };
 
@@ -95,14 +97,11 @@ const deleteUser = (request, response) => {
   const res = response;
 
   const data = req.body.oldData;
-  console.log(req.body);
 
   return Account.AccountModel.findByIdAndDelete(data._id, (err) => {
     if (err) {
-      console.log(err);
       return res.status(400).json({ error: 'An error occured' });
     }
-    console.log('Successful deletion');
     return res.json({ message: 'Account Has Been Deleted' });
   });
 };

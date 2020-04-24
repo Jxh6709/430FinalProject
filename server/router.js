@@ -19,10 +19,20 @@ const router = (app) => {
   app.delete('/deleteUser', mid.requiresLogin, mid.requiresSecure, controllers.UserPage.deleteUser);
   app.get('/getUsers', mid.requiresSecure, controllers.UserPage.getUsers);
 
-  app.get('/getFaculty', mid.requiresLogin, mid.requiresSecure, controllers.Faculty.getAllFaculty);
+  app.get('/getFaculty', controllers.Faculty.getAllFaculty);
   app.put('/updateFaculty', mid.requiresLogin, mid.requiresSecure, controllers.Faculty.updateFaculty);
   app.post('/addFaculty', mid.requiresLogin, mid.requiresSecure, controllers.Faculty.addFaculty);
   app.delete('/deleteFaculty', mid.requiresLogin, mid.requiresSecure, controllers.Faculty.deleteFaculty);
+  app.get('/getTerms', mid.requiresSecure, controllers.Courses.getTerms);
+  app.get('/getCoursesPerInstructorAndTerm', mid.requiresSecure, controllers.Courses.getCoursesPerInstructorAndTerm);
+  app.get('/getFacultyInfo', mid.requiresSecure, controllers.Faculty.getInstructor);
+
+  app.get('/getCourses', mid.requiresLogin, mid.requiresSecure, controllers.Courses.getAllCourses);
+  app.put('/updateCourse', mid.requiresLogin, mid.requiresSecure, controllers.Courses.updateCourse);
+  app.post('/addCourse', mid.requiresLogin, mid.requiresSecure, controllers.Courses.addCourse);
+  app.delete('/deleteCourse', mid.requiresLogin, mid.requiresSecure, controllers.Courses.deleteCourse);
+
+  app.post('/handleContracts', mid.requiresLogin, mid.requiresSecure, controllers.SendPage.handleContracts);
 
   app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
 };

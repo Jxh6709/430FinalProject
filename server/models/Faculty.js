@@ -39,6 +39,7 @@ const FacultySchema = new mongoose.Schema({
     default: Date.now,
   },
 });
+FacultySchema.index({ firstName: 1, lastName: 1 }, { unique: true });
 
 FacultySchema.statics.updateFaculty = (id, facultyObj, callback) => {
   FacultyModel.findOneAndUpdate(id, facultyObj, {
@@ -46,9 +47,15 @@ FacultySchema.statics.updateFaculty = (id, facultyObj, callback) => {
   }, callback);
 };
 
-FacultySchema.statics.getAllFaculty = (callback) => FacultyModel.find({}).select('firstName lastName yearsWorked street city_state_zip email startDate')
+FacultySchema.statics.getAllFaculty = (callback) => FacultyModel.find({})
+  .select('firstName lastName yearsWorked street city_state_zip email startDate')
   .lean()
   .exec(callback);
+
+FacultySchema.statics.getInstructors = (callback) => FacultyModel.find({}).distinct('_id', callback);
+
+FacultySchema.statics.getInstructor = (id, cb) => FacultyModel.findOne({ _id: id }).lean().exec(cb);
+
 
 FacultyModel = mongoose.model('Faculty', FacultySchema);
 module.exports.FacultyModel = FacultyModel;

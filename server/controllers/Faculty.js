@@ -8,9 +8,11 @@ const getAllFaculty = (req, res) => Faculty.FacultyModel.getAllFaculty((err, doc
     return res.status(404).json({ error: 'No Faculty Found' });
   }
 
-  const schema = helpers.buildTableStructureFromSchema(Faculty.FacultySchema);
-
-  return res.json({ data: docs, cols: schema });
+  let schema = null;
+  return helpers.buildTableStructureFromSchema(Faculty.FacultySchema).then((result) => {
+    schema = result;
+    return res.json({ data: docs, cols: schema });
+  });
 });
 
 const addFaculty = (request, response) => {
@@ -51,14 +53,11 @@ const deleteFaculty = (request, response) => {
   const res = response;
 
   const data = req.body.oldData;
-  console.log(req.body);
 
   return Faculty.FacultyModel.findByIdAndDelete(data._id, (err) => {
     if (err) {
-      console.log(err);
       return res.status(400).json({ error: 'An error occured' });
     }
-    console.log('Successful deletion');
     return res.json({ message: 'Faculty Has Been Deleted' });
   });
 };
@@ -80,10 +79,27 @@ const updateFaculty = (request, response) => {
   });
 };
 
+const getInstructor = (request, response) => {
+  const req = request;
+  const res = response;
+
+  if (!req.query.id) {
+    return res.status(400).json({ error: 'id is required' });
+  }
+
+  return Faculty.FacultyModel.getInstructor(req.query.id, (err, doc) => {
+    if (err || !doc) {
+      return res.status(404).json({ error: `Could Not Find Faculty with id ${req.query.id}` });
+    }
+    return res.json({ data: doc });
+  });
+};
+
 
 module.exports = {
   getAllFaculty,
   addFaculty,
   deleteFaculty,
   updateFaculty,
+  getInstructor,
 };

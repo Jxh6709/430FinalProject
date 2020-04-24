@@ -1,11 +1,9 @@
 const profilePage = (req, res) => {
-  console.log(req.session);
   res.render('app', { csrfToken: req.csrfToken(), greeting: `Welcome ${req.session.account.username}` });
 };
 // using redis sessions to remember the active component
 // having both a setter and a getter
 const setActiveComponent = (req, res) => {
-  console.log(req.body);
   req.session.activeComponent = 'send';
   return res.status(204);
 };

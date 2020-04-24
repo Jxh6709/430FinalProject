@@ -3,11 +3,18 @@ import MaterialTable from 'material-table';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import {sendAjax} from './index';
+import TelegramIcon from '@material-ui/icons/Telegram';
+import FindInPageIcon from '@material-ui/icons/FindInPage';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import AccountBoxIcon from '@material-ui/icons/AccountBox';
+import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
+import SchoolIcon from '@material-ui/icons/School';
+import AssignmentIcon from '@material-ui/icons/Assignment';
 
 
-const yayToast = (msg) => {
+export const yayToast = (msg) => {
     toast.success(msg, {
-        position: "top-center",
+        position: "bottom-center",
         autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: true,
@@ -27,7 +34,7 @@ export const GenTable = (props) => {
 
         setState({columns: colNames, data: persons}); 
     });
-  },[]);  
+  },[props.getURL]);  
   //the pieces of our table
   const [state, setState] = React.useState({
     columns: [
@@ -186,93 +193,22 @@ export const NavComponent = (props) => {
     return (
         <div>
             <nav className="navbar navbar-light navbar-expand-md sticky-top navigation-clean-button navStyles">
-                <div className="container-fluid"><a className="navbar-brand" href="#"><i className="fa fa-globe"></i>&nbsp;Contract Solutions</a><button data-toggle="collapse" className="navbar-toggler" data-target="#navcol-1"><span className="sr-only">Toggle navigation</span><span className="navbar-toggler-icon"></span></button>
+                <div className="container-fluid"><a className="navbar-brand" href="#"> <AssignmentIcon /> &nbsp;Contract Solutions</a><button data-toggle="collapse" className="navbar-toggler" data-target="#navcol-1"><span className="sr-only">Toggle navigation</span><span className="navbar-toggler-icon"></span></button>
                     <div
                         className="collapse navbar-collapse" id="navcol-1">
                         <ul className="nav navbar-nav ml-auto">
-                            <li className="nav-item" role="presentation"><a id="sendNav" className={`nav-link text-white ${props.activePage === 'send' ? "activePage" : ""}`}  href="#"><i className="fa fa-home"></i>&nbsp;Send</a></li>
-                            <li className="nav-item" role="presentation"><a className="nav-link text-white" href="#"><i className="fa fa-wpexplorer"></i>&nbsp;Preview</a></li>
-                            <li className="nav-item" role="presentation"><a className="nav-link text-white" href="#"><i className="fa fa-star-o"></i>&nbsp;Semesters</a></li>
-                            <li className="nav-item" role="presentation"><a id = "facultyNav" className={`nav-link text-white ${props.activePage === 'faculty' ? "activePage" : ""}`} href="#"><i className="fa fa-user-circle-o"></i>&nbsp;Faculty</a></li>
-                            <li className="nav-item" role="presentation"><a id = "profileNav" className={`nav-link text-white ${props.activePage === 'profile' ? "activePage" : ""}`} href="#"><i className="icon ion-person"></i>&nbsp;Your Account</a></li>
-                            <li className="nav-item" role="presentation"><a className="nav-link text-white" href="/logout"><i className="icon ion-log-out"></i>&nbsp;Logout</a></li>
+                            <li className="nav-item" role="presentation"><a id="sendNav" className={`nav-link text-white ${props.activePage === 'send' ? "activePage" : ""}`}  href="#"> <TelegramIcon /> &nbsp;Send</a></li>
+                            <li className="nav-item" role="presentation"><a id="previewNav" className={`nav-link text-white ${props.activePage === 'preview' ? "activePage" : ""}`} href="#"> <FindInPageIcon /> &nbsp;Preview</a></li>
+                            <li className="nav-item" role="presentation"><a id="courseNav"  className={`nav-link text-white ${props.activePage === 'courses' ? "activePage" : ""}`} href="#"> <SchoolIcon /> &nbsp;Semesters</a></li>
+                            <li className="nav-item" role="presentation"><a id = "facultyNav" className={`nav-link text-white ${props.activePage === 'faculty' ? "activePage" : ""}`} href="#"> <SupervisorAccountIcon /> &nbsp;Faculty</a></li>
+                            <li className="nav-item" role="presentation"><a id = "profileNav" className={`nav-link text-white ${props.activePage === 'profile' ? "activePage" : ""}`} href="#"> <AccountBoxIcon /> &nbsp;Your Account</a></li>
+                            <li className="nav-item" role="presentation"><a className="nav-link text-white" href="/logout"> <ExitToAppIcon /> &nbsp;Logout</a></li>
                         </ul>
                     </div>
                 </div>
             </nav>
         </div>
     )
-};
-
-export const SendComponent = (props) => {
-    return (
-        <div>
-            <section id="contact" className="sendStyles">
-        <div className="container">
-            <form id="contactForm" action="javascript:void();" method="post">
-                <div className="form-row sendMargin">
-                    <div className="col-md-6 sendPadding">
-                        <fieldset></fieldset>
-                        <legend className="pbFt"><i className="fa fa-info"></i>&nbsp;Options</legend>
-                        <p></p>
-                        <div className="table-responsive">
-                            <table className="table">
-                                <tbody>
-                                    <tr>
-                                        <td><i className="fa fa-check-circle"></i></td>
-                                        <td>
-                                            <div className="dropdown"><button className="btn btn-primary dropdown-toggle sendDropdown" data-toggle="dropdown" aria-expanded="false" type="button" >Select a term</button>
-                                                <div className="dropdown-menu" role="menu"><a className="dropdown-item" role="presentation" href="#">First Item</a><a className="dropdown-item" role="presentation" href="#">Second Item</a><a className="dropdown-item" role="presentation" href="#">Third Item</a></div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td><i className="icon ion-ios-people"></i></td>
-                                        <td>
-                                            <div className="dropdown"><button className="btn btn-primary dropdown-toggle sendDropdown" data-toggle="dropdown" aria-expanded="false" type="button" >Select Faculty</button>
-                                                <div className="dropdown-menu"
-                                                    role="menu"><a className="dropdown-item" role="presentation" href="#">First Item</a><a className="dropdown-item" role="presentation" href="#">Second Item</a><a className="dropdown-item" role="presentation" href="#">Third Item</a></div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr></tr>
-                                    <tr>
-                                        <td><i className="icon ion-ios-email"></i></td>
-                                        <td className="border emailBorder"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div><button className="btn btn-primary active btn-block downloadButton" type="submit">Download Selected<i className="fa fa-chevron-circle-right mlFive" ></i></button>
-                        <button className="btn btn-primary active btn-block downloadButton" type="submit">Download All<i className="fa fa-chevron-circle-right mlFive" ></i></button></div>
-                    <div className="col-12 col-md-6 sendPadding" id="message" >
-                        <fieldset>
-                            <legend><i className="fa fa-envelope"></i>&nbsp;Email</legend>
-                        </fieldset>
-                        <div className="form-group has-feedback">
-                            <label for="from_name">Subject</label>
-                            <input className="form-control" type="text" id="from_name"  name="from_name" placeholder="Voornaam en Achternaam" />
-                        </div>
-                        <div className="form-group"><label for="comments">Message</label>
-                            <textarea className="form-control" id="comments" name="Comments" placeholder="Type uw bericht hier.." rows="5">
-                                </textarea>
-                        </div>
-                        <div className="form-group">
-                            <button className="btn btn-primary active btn-block buttonBackground" type="submit">Email Selected
-                            <i className="fa fa-chevron-circle-right mlFive">
-                                </i>
-                            </button>
-                            <button className="btn btn-primary active btn-block buttonBackground"  type="submit">Email All
-                            <i className="fa fa-chevron-circle-right mlFive" ></i>
-                            </button>
-                        </div>
-                        
-                    </div>
-                </div>
-            </form>
-        </div>
-    </section>
-    </div>
-    );
 };
 
 

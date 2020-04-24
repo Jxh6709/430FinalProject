@@ -26,7 +26,6 @@ const mongooseOptions = {
 
 mongoose.connect(dbURL, mongooseOptions, (err) => {
   if (err) {
-    console.log('Could not connect to DB');
     throw err;
   }
 });
