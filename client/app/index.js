@@ -26,9 +26,13 @@ export const sendAjax = (type, action, data, success) => {
         dataType: "json",
         success: success,
         error: (xhr, status, error) => {
-          const messageObj = JSON.parse(xhr.responseText);
-          booToast(messageObj.error);
-          
+            try {
+                const messageObj = JSON.parse(xhr.responseText);
+                booToast(messageObj.error);
+            }
+            catch (e) {
+                //pass
+            }
         }
       });        
 }

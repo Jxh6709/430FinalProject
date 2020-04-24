@@ -17,8 +17,8 @@
     "watch": "npm run watchBrow && npm run watchLogin",
     "buildBrow": "browserify -t [ babelify --presets [ @babel/preset-env @babel/preset-react ] ] ./client/app/components.js ./client/app/index.js ./client/app/previewComponent.js ./client/app/sendComponents.js -o ./hosted/bundle.js",
     "watchBrow": "watchify -t [ babelify --presets [ @babel/preset-env @babel/preset-react ] ] ./client/app/components.js ./client/app/index.js ./client/app/previewComponent.js ./client/app/sendComponents.js  -o ./hosted/bundle.js",
-    "buildLogin": "browserify -t [ babelify --presets [ @babel/preset-env @babel/preset-react ] ] ./client/login/client.js ./client/app/index.js -o ./hosted/loginBundle.js",
-    "watchLogin": "watchify -t [ babelify --presets [ @babel/preset-env @babel/preset-react ] ] ./client/login/client.js ./client/app/index.js -o ./hosted/loginBundle.js",
+    "buildLogin": "browserify -t [ babelify --presets [ @babel/preset-env @babel/preset-react ] ] ./client/login/client.js ./client/helper/helper.js -o ./hosted/loginBundle.js",
+    "watchLogin": "watchify -t [ babelify --presets [ @babel/preset-env @babel/preset-react ] ] ./client/login/client.js ./client/helper/helper.js -o ./hosted/loginBundle.js",
     "start": "node ./server/app.js",
     "pretest": "eslint ./server --fix",
     "test": "echo \"Tests complete\""

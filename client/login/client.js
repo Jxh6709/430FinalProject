@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom'
-import {sendAjax} from '../app/index'
+import {sendAjax} from '../helper/helper'
 import {toast} from 'react-toastify';
 
 const redirect = (response) => {
