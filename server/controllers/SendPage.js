@@ -1,7 +1,7 @@
 const ADM = require('adm-zip');
 const axios = require('axios').default;
 // const downFolder = require('downloads-folder');
-// const fs = require('fs');
+const fs = require('fs');
 // const path = require('path');
 const moment = require('moment');
 const emailHandler = require('../models/emailHandler');
@@ -158,14 +158,15 @@ const handleContracts = async (req, res) => {
         });
         const data = zip.toBuffer();
         const downloadName = 'contracts.zip';
-        res.set('Content-Type', 'application/octet-stream');
-        res.set('Content-Disposition', `attachment; filename=${downloadName}`);
-        res.set('Content-Length', data.length);
-        res.send(data);
+        fs.writeFile(downloadName, data, (err) => {
+          console.log('made file', err);
+          return res.json({ message: 'Successfully processed all people' });
+        });
+        // res.set('Content-Type', 'application/octet-stream');
+        // res.set('Content-Disposition', `attachment; filename=${downloadName}`);
+        // res.set('Content-Length', data.length);
+        // res.send(data);
 
-        // res.contentType('zip');
-        // res.download(zipBuf);
-        // console.log(res);
         // res.end();
       };
       start();
