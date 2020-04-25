@@ -157,13 +157,13 @@ const handleContracts = async (req, res) => {
           await processId(id, req, res);
           console.log(id);
         });
-        const zipBuf = zip.toBuffer();
-        const readStream = new stream.PassThrough();
-        readStream.end(zipBuf);
+        const data = zip.toBuffer();
+        const downloadName = 'contracts.zip';
+        res.set('Content-Type','application/octet-stream');
+        res.set('Content-Disposition',`attachment; filename=${downloadName}`);
+        res.set('Content-Length',data.length);
+        res.send(data);
 
-        res.set('Content-disposition', 'attachment; filename=contracts.zip');
-        res.set('Content-Type', 'zip');
-        readStream.pipe(res);
         // res.contentType('zip');
         // res.download(zipBuf);
         // console.log(res);
