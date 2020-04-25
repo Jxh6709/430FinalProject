@@ -159,16 +159,17 @@ const handleContracts = async (req, res) => {
         const data = zip.toBuffer();
         console.log(data);
         const downloadName = 'contracts.zip';
-        return fs.writeFile(downloadName, data, (err) => {
-          console.log('made file', err);
-          return res.download(downloadName);
+        res.writeHead(200, {
+          'Content-Type': 'application/zip',
+          'Content-Disposition': `attachment; filename=${downloadName}`,
+          'Content-Length': data.length,
         });
+        return res.end(data);
         // res.set('Content-Type', 'application/octet-stream');
         // res.set('Content-Disposition', `attachment; filename=${downloadName}`);
         // res.set('Content-Length', data.length);
         // res.send(data);
 
-        // res.contentType('zip');
         // res.download(zipBuf);
         // console.log(res);
         // res.end();
