@@ -1,7 +1,8 @@
+const ADM = require('adm-zip');
 const axios = require('axios').default;
 const downFolder = require('downloads-folder');
-const fs = require('fs');
-const path = require('path');
+// const fs = require('fs');
+// const path = require('path');
 const moment = require('moment');
 const emailHandler = require('../models/emailHandler');
 const docMaker = require('../models/docMaker');
@@ -12,6 +13,7 @@ const momentTime = (time) => moment(time).format('HH:mm');
 
 let fullUrl;
 
+let zip;
 
 const getFacultyInfoAndMakeDocument = async (id, req, res, courseArr, courses) => {
   try {
@@ -35,10 +37,12 @@ const getFacultyInfoAndMakeDocument = async (id, req, res, courseArr, courses) =
     };
     const docBuffer = docMaker.docIt(docObj);
     const docName = `${info.lastName}, ${info.firstName} ${req.body.term}.docx`;
+    zip.addFile(docName, docBuffer);
 
     return { buffer: docBuffer, name: docName, email: info.email };
   } catch (e) {
     console.log(`could not get faculty info ${id}`);
+    console.log(e);
     return res.status(500).json({ error: 'Something went wrong, please try again later.' });
   }
 };
@@ -94,19 +98,23 @@ const processId = async (id, req, res) => {
         email: doc.email,
       },
       doc.buffer, doc.name);
+    } else if (zip.getEntries().length > 0) {
+      zip.writeZip(`${downFolder()}/files.zip`);
     } else {
-      // only downloading
-      fs.writeFileSync(path.resolve(downFolder(), doc.name), doc.buffer);
+      console.log('Data Not Available Yet');
     }
-    return { message: 'Success email' };
+    return { message: 'Success' };
   } catch (e) {
-    return res.status(500).json({ error: 'Something went wrong, please try again later.' });
+    // return res.status(500).json({ error: 'Something went wrong, please try again later.' });
+    return { message: 'Failure' };
   }
 };
 
 
 const handleContracts = async (req, res) => {
   fullUrl = `${req.protocol}://${req.get('host')}`;
+  // CLEAR ZIPS
+  zip = new ADM();
 
   req.body = req.body.data;
 
@@ -141,10 +149,10 @@ const handleContracts = async (req, res) => {
         await processId(id._id, req, res);
       });
     } catch (e) {
+      console.log('main', e);
       return res.status(500).json({ error: 'Something went wrong, please try again later.' });
     }
   }
-
   return res.json({ message: 'Successfully processed all people' });
 };
 

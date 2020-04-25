@@ -3,6 +3,7 @@ const Docxtemplater = require('docxtemplater');
 const fs = require('fs');
 const path = require('path');
 
+
 const docIt = (body) => {
   const content = fs
     .readFileSync(path.resolve(`${__dirname}/../../`, 'MASTERLETTER.docx'), 'binary');
@@ -35,6 +36,7 @@ const docIt = (body) => {
   }
 
   const buf = doc.getZip().generate({ type: 'nodebuffer' });
+
   // emailIt(buf);
   // fs.writeFileSync(path.resolve(__dirname,`${lname},${fname} Letter.docx`),buf);
   return buf;
