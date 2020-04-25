@@ -1,7 +1,6 @@
+const fs = require('fs');
 const ADM = require('adm-zip');
 const axios = require('axios').default;
-// const downFolder = require('downloads-folder');
-const fs = require('fs');
 // const path = require('path');
 const moment = require('moment');
 const emailHandler = require('../models/emailHandler');
@@ -113,7 +112,8 @@ const processId = async (id, req, res) => {
 const asyncForEach = async (ids, doingAll, callback) => {
   const len = ids.length;
   for (let i = 0; i < len; i++) {
-    callback((doingAll === true) ? ids[i]._id : ids[i]);
+    // eslint-disable-next-line no-await-in-loop
+    await callback((doingAll === true) ? ids[i]._id : ids[i]);
   }
 };
 
@@ -157,16 +157,20 @@ const handleContracts = async (req, res) => {
           console.log(id);
         });
         const data = zip.toBuffer();
+        console.log(data);
         const downloadName = 'contracts.zip';
-        fs.writeFile(downloadName, data, (err) => {
+        return fs.writeFile(downloadName, data, (err) => {
           console.log('made file', err);
-          return res.json({ message: 'Successfully processed all people' });
+          return res.download(downloadName);
         });
         // res.set('Content-Type', 'application/octet-stream');
         // res.set('Content-Disposition', `attachment; filename=${downloadName}`);
         // res.set('Content-Length', data.length);
         // res.send(data);
 
+        // res.contentType('zip');
+        // res.download(zipBuf);
+        // console.log(res);
         // res.end();
       };
       start();
