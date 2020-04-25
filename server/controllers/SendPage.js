@@ -1,6 +1,7 @@
+const stream = require('stream');
 const ADM = require('adm-zip');
 const axios = require('axios').default;
-const downFolder = require('downloads-folder');
+// const downFolder = require('downloads-folder');
 // const fs = require('fs');
 // const path = require('path');
 const moment = require('moment');
@@ -87,6 +88,7 @@ const processId = async (id, req, res) => {
       // pass
       console.log(`id ${id} produced undefined`);
     }
+    console.log(zip.getEntries().length);
 
     if (req.body.email && req.body.email === 'true') {
       if (!req.body.subject || !req.body.emailContent) {
@@ -98,18 +100,23 @@ const processId = async (id, req, res) => {
         email: doc.email,
       },
       doc.buffer, doc.name);
-    } else if (zip.getEntries().length > 0) {
-      zip.writeZip(`${downFolder()}/files.zip`);
     } else {
       console.log('Data Not Available Yet');
     }
     return { message: 'Success' };
   } catch (e) {
+    console.log(e);
     // return res.status(500).json({ error: 'Something went wrong, please try again later.' });
     return { message: 'Failure' };
   }
 };
 
+const asyncForEach = async (ids, doingAll, callback) => {
+  const len = ids.length;
+  for (let i = 0; i < len; i++) {
+    callback((doingAll === true) ? ids[i]._id : ids[i]);
+  }
+};
 
 const handleContracts = async (req, res) => {
   fullUrl = `${req.protocol}://${req.get('host')}`;
@@ -145,16 +152,36 @@ const handleContracts = async (req, res) => {
 
       const facIds = result.data;
 
-      facIds.forEach(async (id) => {
-        await processId(id._id, req, res);
-      });
+      const start = async () => {
+        await asyncForEach(facIds, true, async (id) => {
+          await processId(id, req, res);
+          console.log(id);
+        });
+        const zipBuf = zip.toBuffer();
+        const readStream = new stream.PassThrough();
+        readStream.end(zipBuf);
+
+        res.set('Content-disposition', 'attachment; filename=contracts.zip');
+        res.set('Content-Type', 'zip');
+        readStream.pipe(res);
+        // res.contentType('zip');
+        // res.download(zipBuf);
+        // console.log(res);
+        // res.end();
+      };
+      start();
+      // facIds.forEach(async (id) => {
+      //   await processId(id._id, req, res);
+      // });
     } catch (e) {
       console.log('main', e);
       return res.status(500).json({ error: 'Something went wrong, please try again later.' });
     }
   }
-  return res.json({ message: 'Successfully processed all people' });
+  return true;
+  // return res.json({ message: 'Successfully processed all people' });
 };
+
 
 module.exports = {
   handleContracts,
