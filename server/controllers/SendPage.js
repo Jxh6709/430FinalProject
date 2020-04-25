@@ -1,4 +1,3 @@
-const stream = require('stream');
 const ADM = require('adm-zip');
 const axios = require('axios').default;
 // const downFolder = require('downloads-folder');
@@ -159,9 +158,9 @@ const handleContracts = async (req, res) => {
         });
         const data = zip.toBuffer();
         const downloadName = 'contracts.zip';
-        res.set('Content-Type','application/octet-stream');
-        res.set('Content-Disposition',`attachment; filename=${downloadName}`);
-        res.set('Content-Length',data.length);
+        res.set('Content-Type', 'application/octet-stream');
+        res.set('Content-Disposition', `attachment; filename=${downloadName}`);
+        res.set('Content-Length', data.length);
         res.send(data);
 
         // res.contentType('zip');
