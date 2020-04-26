@@ -26,13 +26,31 @@ export const sendAjax = (type, action, data, success) => {
         dataType: "json",
         success: success,
         error: (xhr, status, error) => {
-            try {
-                const messageObj = JSON.parse(xhr.responseText);
-                booToast(messageObj.error);
+            if (xhr.status === 200) {
+                try {
+                    const uriContent = `data:application/octet-stream;charset=utf-8;base64,${xhr.responseText.toString('base64')}`;
+                    
+                    const link = document.createElement('a');
+                    link.setAttribute("href",URL.createObjectURL(new Blob([xhr.responseText], {
+                        type: "application/octet-stream"
+                        }))
+                    );
+                    link.setAttribute("download", "contracts.zip");
+                    link.click();
+                } catch (e) {
+                    console.log('Could not download')
+                }
+            }else {
+                try {
+                    const messageObj = JSON.parse(xhr.responseText);
+                    booToast(messageObj.error);
+                }
+                catch (e) {
+                    //pass
+                    console.log(e);           
+                }
             }
-            catch (e) {
-                //pass
-            }
+           
         }
       });        
 }

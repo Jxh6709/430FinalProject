@@ -21,6 +21,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import jsonQuery from 'json-query';
 import { yayToast } from './components';
 import { booToast, sendAjax } from './index';
+import { saveAs } from 'file-saver';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -114,6 +115,14 @@ export const SendComponent = (props) => {
         useState({...state, selectedInstructors: value});
     };
 
+    const str2bytes  = (str) => {
+        let bytes = new Uint8Array(str.length);
+        for (let i=0; i<str.length; i++) {
+            bytes[i] = str.charCodeAt(i);
+        }
+        return bytes;
+    }
+
     const handleButtons = (name) => {
         let objToPost = {
             firstPayDate: state.firstPayDate || momentDate(new Date()),
@@ -140,12 +149,15 @@ export const SendComponent = (props) => {
             });
             objToPost['faculty'] = arrayOfIds.join('-');
         }
-        sendAjax('POST', '/handleContracts', {data: objToPost, _csrf: props.csrf}, (result) => {
-            if (result.message) {
-                yayToast(result.message);
+        sendAjax('POST', '/handleContracts', {data: objToPost, _csrf: props.csrf}, (res) => {
+            try {
+                saveAs(res.href,"contracts.zip");
+                yayToast("Contracts Downloaded");
+            } catch (e) {
+                booToast("Error Downloading Contracts: Please try again later.")
+                console.log('Could not download')
             }
         })
-
     }
 
     const classes = useStyles();

@@ -1,9 +1,10 @@
+const JSZip = require('jszip');
 const ADM = require('adm-zip');
 const axios = require('axios').default;
-// const path = require('path');
 const moment = require('moment');
 const emailHandler = require('../models/emailHandler');
 const docMaker = require('../models/docMaker');
+
 
 const momentDate = (date) => moment(date).format('YYYY-MM-DD');
 
@@ -12,6 +13,7 @@ const momentTime = (time) => moment(time).format('HH:mm');
 let fullUrl;
 
 let zip;
+let jszip;
 
 const getFacultyInfoAndMakeDocument = async (id, req, res, courseArr, courses) => {
   try {
@@ -36,6 +38,7 @@ const getFacultyInfoAndMakeDocument = async (id, req, res, courseArr, courses) =
     const docBuffer = docMaker.docIt(docObj);
     const docName = `${info.lastName}, ${info.firstName} ${req.body.term}.docx`;
     zip.addFile(docName, docBuffer);
+    jszip.file(docName, docBuffer, { base64: true });
 
     return { buffer: docBuffer, name: docName, email: info.email };
   } catch (e) {
@@ -83,9 +86,7 @@ const processId = async (id, req, res) => {
 
     if (doc === undefined) {
       // pass
-      console.log(`id ${id} produced undefined`);
     }
-    console.log(zip.getEntries().length);
 
     if (req.body.email && req.body.email === 'true') {
       if (!req.body.subject || !req.body.emailContent) {
@@ -97,8 +98,6 @@ const processId = async (id, req, res) => {
         email: doc.email,
       },
       doc.buffer, doc.name);
-    } else {
-      console.log('Data Not Available Yet');
     }
     return { message: 'Success' };
   } catch (e) {
@@ -120,6 +119,7 @@ const handleContracts = async (req, res) => {
   fullUrl = `${req.protocol}://${req.get('host')}`;
   // CLEAR ZIPS
   zip = new ADM();
+  jszip = new JSZip();
 
   req.body = req.body.data;
 
@@ -135,9 +135,15 @@ const handleContracts = async (req, res) => {
   if (req.body.faculty) {
     // handle selected
     const facIds = req.body.faculty.split('-');
-    facIds.forEach((id) => {
-      processId(id, req, res);
-    });
+    const start = async () => {
+      await asyncForEach(facIds, false, async (id) => {
+        await processId(id, req, res);
+        console.log(id);
+      });
+
+      jszip.generateAsync({ type: 'base64' }).then((base64) => res.json({ href: `data:application/zip;base64,${base64}` }));
+    };
+    start();
   } else {
     // handle all
     try {
@@ -155,23 +161,8 @@ const handleContracts = async (req, res) => {
           await processId(id, req, res);
           console.log(id);
         });
-        const data = zip.toBuffer();
-        console.log(data);
-        const downloadName = 'contracts.zip';
-        res.writeHead(200, {
-          'Content-Type': 'application/zip',
-          'Content-Disposition': `attachment; filename=${downloadName}`,
-          'Content-Length': data.length,
-        });
-        return res.end(data);
-        // res.set('Content-Type', 'application/octet-stream');
-        // res.set('Content-Disposition', `attachment; filename=${downloadName}`);
-        // res.set('Content-Length', data.length);
-        // res.send(data);
 
-        // res.download(zipBuf);
-        // console.log(res);
-        // res.end();
+        jszip.generateAsync({ type: 'base64' }).then((base64) => res.json({ href: `data:application/zip;base64,${base64}` }));
       };
       start();
       // facIds.forEach(async (id) => {
