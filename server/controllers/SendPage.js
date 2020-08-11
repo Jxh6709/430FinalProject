@@ -7,7 +7,7 @@ const payScale = require('../models/payScale');
 
 const momentDate = (date) => moment(date).format('YYYY-MM-DD');
 
-const momentTime = (time) => moment(time).format('HH:mm');
+const momentTime = (time) => moment(time).format('hh:mm');
 
 let fullUrl;
 
