@@ -33,11 +33,11 @@ mongoose.connect(dbURL, mongooseOptions, (err) => {
 // REDIS
 let redisURL = {
   // settings
-  hostname: 'redis-16860.c11.us-east-1-2.ec2.cloud.redislabs.com',
-  port: '16860',
+  hostname: 'redis-17423.c84.us-east-1-2.ec2.cloud.redislabs.com',
+  port: '17423',
 };
 
-let redisPASS = 'wr5BGWBeZwKDHaRG90OjpzxmDsZ8vmSm';
+let redisPASS = 'aTfUnnecty3hdfkkrwEhVj7mxBLPyXu5';
 
 // for heroku
 const passIndex = 1;

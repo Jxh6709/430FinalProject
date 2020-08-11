@@ -1,7 +1,44 @@
+const readXlsxFile = require('read-excel-file/node');
+const moment = require('moment');
 const models = require('../models');
 
 const { Faculty } = models;
 const helpers = require('./helpers');
+
+const upload = async (req, res) => {
+  try {
+    if (req.file === undefined) {
+      return res.status(400).error({ error: 'Please Upload an Excel File' });
+    }
+
+    const path = `${__dirname
+    }../../../resources/static/assets/uploads/${req.file.filename}`;
+
+    const facultyToInsert = [];
+
+    readXlsxFile(path).then((rows) => {
+      // removing headers will validate later
+      rows.shift();
+
+      rows.forEach((row) => {
+        const fac = {
+          firstName: row[1],
+          lastName: row[0],
+          email: row[6],
+          yearsWorked: row[2],
+          street: row[3],
+          city_state_zip: row[4],
+          startDate: moment(row[7]).format('MM/DD/YY'),
+        };
+        facultyToInsert.push(fac);
+      });
+    });
+    return Faculty.FacultyModel.insertMany(facultyToInsert).then(() => res.json({ success: 'Successful Upload' }))
+      .catch((err) => res.status(400).json({ error: err.message }));
+  } catch (e) {
+    return res.status(500).json({ error: 'Something went wrong ' });
+  }
+};
 
 const getAllFaculty = (req, res) => Faculty.FacultyModel.getAllFaculty((err, docs) => {
   if (err || !docs) {
@@ -95,6 +132,22 @@ const getInstructor = (request, response) => {
   });
 };
 
+const getInstructorByName = (request, response) => {
+  const req = request;
+  const res = response;
+
+  if (!req.query.fname || !req.query.lname) {
+    return res.status(400).json({ error: 'first and last name are required' });
+  }
+
+  return Faculty.FacultyModel.getInstructorByName(req.query.fname, req.query.lname, (err, doc) => {
+    if (err || !doc) {
+      return res.status(404).json({ error: `Could Not Find Faculty ${req.query.fname} ${req.query.lname}` });
+    }
+    return res.json({ data: doc });
+  });
+};
+
 
 module.exports = {
   getAllFaculty,
@@ -102,4 +155,6 @@ module.exports = {
   deleteFaculty,
   updateFaculty,
   getInstructor,
+  getInstructorByName,
+  upload,
 };

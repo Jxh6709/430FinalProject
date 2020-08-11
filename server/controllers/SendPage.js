@@ -1,10 +1,9 @@
 const JSZip = require('jszip');
-const ADM = require('adm-zip');
 const axios = require('axios').default;
 const moment = require('moment');
 const emailHandler = require('../models/emailHandler');
 const docMaker = require('../models/docMaker');
-
+const payScale = require('../models/payScale');
 
 const momentDate = (date) => moment(date).format('YYYY-MM-DD');
 
@@ -12,7 +11,6 @@ const momentTime = (time) => moment(time).format('HH:mm');
 
 let fullUrl;
 
-let zip;
 let jszip;
 
 const getFacultyInfoAndMakeDocument = async (id, req, res, courseArr, courses) => {
@@ -21,23 +19,24 @@ const getFacultyInfoAndMakeDocument = async (id, req, res, courseArr, courses) =
     const facInfo = (await infoReq).data;
 
     const info = facInfo.data;
-
+    const yearsWorked = moment.duration(moment(new Date()).diff(moment(info.startDate))).years();
     const docObj = {
       fname: info.firstName,
       lname: info.lastName,
       street: info.street,
       city: info.city_state_zip,
-      Rate_of_Pay: 1500,
+      startDate: info.startDate,
+      Rate_of_Pay: payScale[yearsWorked],
       semStartDate: momentDate(courses[0].startDate), // courses.startDate,
       semEndDate: momentDate(courses[0].endDate), // courses.semEndDate,
       firstPayDate: req.body.firstPayDate,
       lastPayDate: req.body.lastPayDate,
       dueDate: req.body.dueDate,
       courses: courseArr,
+      yearsWorked,
     };
     const docBuffer = docMaker.docIt(docObj);
     const docName = `${info.lastName}, ${info.firstName} ${req.body.term}.docx`;
-    zip.addFile(docName, docBuffer);
     jszip.file(docName, docBuffer, { base64: true });
 
     return { buffer: docBuffer, name: docName, email: info.email };
@@ -55,7 +54,13 @@ const buildCoursesArray = async (courseObjs) => {
     const obj = {};
 
     obj.id = c.courseID;
-    obj.course = `${c.subject} (${c.catalog}) - ${c.descr} ${c.section} ${c.classNbr} ${momentDate(c.startDate)} - ${momentDate(c.endDate)} ${momentTime(c.mtgStart)} - ${momentTime(c.mtgEnd)}`;
+    if (c.days !== null) {
+      obj.course = `${c.subject} (${c.catalog}) 0${c.section} - ${c.descr} ${c.days} ${momentTime(c.mtgStart)} - ${momentTime(c.mtgEnd)}`;
+    } else {
+      obj.course = `${c.subject} (${c.catalog}) 0${c.section} - ${c.descr} Online`;
+      obj.isOnline = true;
+    }
+
     courseArray.push(obj);
   });
 
@@ -118,7 +123,6 @@ const asyncForEach = async (ids, doingAll, callback) => {
 const handleContracts = async (req, res) => {
   fullUrl = `${req.protocol}://${req.get('host')}`;
   // CLEAR ZIPS
-  zip = new ADM();
   jszip = new JSZip();
 
   req.body = req.body.data;

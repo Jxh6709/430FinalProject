@@ -1,6 +1,6 @@
 const controllers = require('./controllers');
 const mid = require('./middleware');
-
+const upload = require('./middleware/upload');
 
 const router = (app) => {
   app.get('/getToken', mid.requiresSecure, controllers.Account.getToken);
@@ -24,11 +24,14 @@ const router = (app) => {
   app.get('/getTerms', mid.requiresSecure, controllers.Courses.getTerms);
   app.get('/getCoursesPerInstructorAndTerm', mid.requiresSecure, controllers.Courses.getCoursesPerInstructorAndTerm);
   app.get('/getFacultyInfo', mid.requiresSecure, controllers.Faculty.getInstructor);
+  app.get('/getFacultyByName', mid.requiresSecure, controllers.Faculty.getInstructorByName);
+  app.post('/uploadFaculty', upload.single('file'), controllers.Faculty.upload);
 
   app.get('/getCourses', mid.requiresLogin, mid.requiresSecure, controllers.Courses.getAllCourses);
   app.put('/updateCourse', mid.requiresLogin, mid.requiresSecure, controllers.Courses.updateCourse);
   app.post('/addCourse', mid.requiresLogin, mid.requiresSecure, controllers.Courses.addCourse);
   app.delete('/deleteCourse', mid.requiresLogin, mid.requiresSecure, controllers.Courses.deleteCourse);
+  app.post('/uploadCourses', upload.single('file'), controllers.Courses.upload);
 
   app.post('/handleContracts', mid.requiresLogin, mid.requiresSecure, controllers.SendPage.handleContracts);
 

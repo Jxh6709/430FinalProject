@@ -1,12 +1,22 @@
 const PizZip = require('pizzip');
+
+const moment = require('moment');
 const Docxtemplater = require('docxtemplater');
 const fs = require('fs');
 const path = require('path');
 
 
 const docIt = (body) => {
-  const content = fs
-    .readFileSync(path.resolve(`${__dirname}/../../`, 'MASTERLETTER.docx'), 'binary');
+  let content = fs
+    .readFileSync(path.resolve(`${__dirname}/../../`, 'ReturningInPerson.docx'), 'binary');
+  if (body.courses[0].isOnline) {
+    content = fs
+      .readFileSync(path.resolve(`${__dirname}/../../`, 'ReturningOnline.docx'), 'binary');
+  }
+  if (body.yearsWorked === 0) {
+    content = fs
+      .readFileSync(path.resolve(`${__dirname}/../../`, 'NewHire.docx'), 'binary');
+  }
 
   const zip = new PizZip(content);
 
@@ -14,7 +24,7 @@ const docIt = (body) => {
   doc.loadZip(zip);
 
   doc.setData({
-    letter_date: new Date().toISOString().split('T')[0],
+    letter_date: moment(new Date()).format('l'),
     first_name: body.fname,
     Street: body.street,
     city: body.city,

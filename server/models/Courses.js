@@ -54,6 +54,10 @@ const CoursesSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
+  days: {
+    type: String,
+    default: 'TBD',
+  },
   createdDate: {
     type: Date,
     default: Date.now,

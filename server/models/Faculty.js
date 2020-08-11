@@ -56,6 +56,10 @@ FacultySchema.statics.getInstructors = (callback) => FacultyModel.find({}).disti
 
 FacultySchema.statics.getInstructor = (id, cb) => FacultyModel.findOne({ _id: id }).lean().exec(cb);
 
+const find = (fn, ln, cb) => FacultyModel.findOne({ firstName: fn, lastName: ln }).lean().exec(cb);
+
+FacultySchema.statics.getInstructorByName = (fn, ln, cb) => find(fn, ln, cb);
+
 
 FacultyModel = mongoose.model('Faculty', FacultySchema);
 module.exports.FacultyModel = FacultyModel;

@@ -1,7 +1,80 @@
+const axios = require('axios').default;
+const readXlsxFile = require('read-excel-file/node');
+const moment = require('moment');
 const models = require('../models');
 const helpers = require('./helpers');
 
+
 const { Courses } = models;
+// https://gist.github.com/christopherscott/2782634
+const parseDateExcel = (excelTimestamp) => {
+  const secondsInDay = 24 * 60 * 60;
+  const excelEpoch = new Date(1899, 11, 31);
+  const excelEpochAsUnixTimestamp = excelEpoch.getTime();
+  const missingLeapYearDay = secondsInDay * 1000;
+  const delta = excelEpochAsUnixTimestamp - missingLeapYearDay;
+  const excelTimestampAsUnixTimestamp = excelTimestamp * secondsInDay * 1000;
+  const parsed = excelTimestampAsUnixTimestamp + delta;
+  return parsed || null;
+};
+
+const upload = async (req, res) => {
+  const fullUrl = `${req.protocol}://${req.get('host')}`;
+  try {
+    if (req.file === undefined) {
+      return res.status(400).error({ error: 'Please Upload an Excel File' });
+    }
+
+    const path = `${__dirname
+    }../../../resources/static/assets/uploads/${req.file.filename}`;
+
+    const coursesToAdd = [];
+    const promises = [];
+
+    readXlsxFile(path).then((rows) => {
+      // remove headers for now
+      rows.shift();
+
+      rows.forEach((r) => {
+        const dates = r[7].split(' - ');
+        const nameSplit = r[11].split(',');
+        console.log(nameSplit);
+        promises.push(axios.get(
+          `${fullUrl}/getFacultyByName?fname=${nameSplit[1].split(' ')[0]}&lname=${nameSplit[0]}`,
+        ).then((result) => {
+          const id = result.data.data._id;
+
+          const courseData = {
+            courseID: r[1],
+            term: r[0],
+            classNbr: r[2],
+            subject: r[3],
+            catalog: r[4],
+            descr: r[6],
+            section: r[5],
+            startDate: dates[0],
+            endDate: dates[1],
+            days: r[8],
+            mtgStart: moment(parseDateExcel(r[9])),
+            mtgEnd: moment(parseDateExcel(r[10])),
+            instructor: id,
+          };
+
+          coursesToAdd.push(courseData);
+        }).catch((err) => {
+          console.log(err.response.config.url);
+        }));
+      });
+    });
+    return Promise.all(promises).then(() => {
+      Courses.CoursesModel.insertMany(coursesToAdd).then(() => res.json({ success: 'Successful upload' }))
+        .catch((err) => res.status(400).json({ error: err.message }));
+    });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({ error: 'Something went wrong ' });
+  }
+};
 
 
 const getAllCourses = (req, res) => Courses.CoursesModel.getAllCourses((err, docs) => {
@@ -114,4 +187,5 @@ module.exports = {
   deleteCourse,
   getTerms,
   getCoursesPerInstructorAndTerm: getSpecificCourses,
+  upload,
 };
