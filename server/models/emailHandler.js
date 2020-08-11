@@ -33,7 +33,7 @@ const sendEmail = (body, docBuf, nameOfFile) => {
   // all of the options conveniently in an object
   const mailOptions = {
     from: 'jxh6709@g.rit.edu',
-    to: 'mabcst@rit.edu',
+    to: body.email,
     subject: body.subject,
     text: body.content,
     bcc: 'mabcst@rit.edu',
