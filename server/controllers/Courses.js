@@ -1,29 +1,18 @@
 const axios = require('axios').default;
 
-const SendPage = require('./SendPage');
 
 const readXlsxFile = require('read-excel-file/node');
 const moment = require('moment');
+const SendPage = require('./SendPage');
 const models = require('../models');
 const helpers = require('./helpers');
 
 
 const { Courses } = models;
-// https://gist.github.com/christopherscott/2782634
-const parseDateExcel = (excelTimestamp) => {
-  const secondsInDay = 24 * 60 * 60;
-  const excelEpoch = new Date(1899, 11, 31);
-  const excelEpochAsUnixTimestamp = excelEpoch.getTime();
-  const missingLeapYearDay = secondsInDay * 1000;
-  const delta = excelEpochAsUnixTimestamp - missingLeapYearDay;
-  const excelTimestampAsUnixTimestamp = excelTimestamp * secondsInDay * 1000;
-  const parsed = excelTimestampAsUnixTimestamp + delta;
-  return parsed || null;
-};
 
 const upload = async (req, res) => {
   const fullUrl = `${req.protocol}://${req.get('host')}`;
-  console.log(req.file)
+  console.log(req.file);
   try {
     if (req.file === undefined) {
       return res.status(400).error({ error: 'Please Upload an Excel File' });
@@ -35,7 +24,7 @@ const upload = async (req, res) => {
     const coursesToAdd = [];
     const promises = [];
 
-    readXlsxFile(path).then((rows) => {
+    return readXlsxFile(path).then((rows) => {
       // remove headers for now
       rows.shift();
 
@@ -58,23 +47,19 @@ const upload = async (req, res) => {
             startDate: dates[0],
             endDate: dates[1],
             days: r[8],
-            mtgStart: r[9], 
+            mtgStart: r[9],
             mtgEnd: r[10],
             instructor: id,
           };
-          //console.log(courseData);
+          // console.log(courseData);
           coursesToAdd.push(courseData);
         }).catch((err) => {
           console.log(err.response.config.url);
         }));
       });
-      return Promise.all(promises).then(() => {
-        //res.json({coursesToAdd});
-        Courses.CoursesModel.insertMany(coursesToAdd).then(() => res.json({ success: 'Successful upload' }))
-          .catch((err) => res.status(400).json({ error: err.message }));
-      });
+      return Promise.all(promises).then(() => Courses.CoursesModel.insertMany(coursesToAdd).then(() => res.json({ success: 'Successful upload' }))
+        .catch((err) => res.status(400).json({ error: err.message })));
     });
-   
   } catch (e) {
     console.log(e);
     return res.status(500).json({ error: 'Something went wrong ' });
@@ -89,39 +74,35 @@ const getAllCourses = (req, res) => Courses.CoursesModel.getAllCourses((err, doc
   if (err || !docs) {
     return res.status(404).json({ error: 'No Courses Found' });
   }
-  const newDocs = []
-  let formattedTimes = docs.map((doc) => {
-
+  const newDocs = [];
+  docs.forEach((d) => {
+    const doc = d;
     if (doc.mtgStart == null || doc.mtgEnd == null) {
-      newDocs.push(doc);
-      return
-    }else {
-      let start;
-      let end;
-      if (parseFloat(doc.mtgStart) > 0.0 && parseFloat(doc.mtgEnd) < 1.0) {
-        start = momentTime(new Date(SendPage.parseDateExcel(doc.mtgStart)));
-        end = momentTime(new Date(SendPage.parseDateExcel(doc.mtgEnd)));
-        console.log(doc.mtgStart)
-        console.log(start)
-        doc.mtgStart = start;
-        doc.mtgEnd = end;
-      } else {
-         start = momentTime(doc.mtgStart) || doc.mtgStart;
-         end = momentTime(doc.mtgEnd) || doc.mtgEnd;
-         doc.mtgStart = moment(doc.mtgStart).isValid() ? start : doc.mtgStart;
-         doc.mtgEnd = moment(doc.mtgEnd).isValid() ? end : doc.mtgEnd;
-      }
-  
-      const d1 = momentDate(doc.startDate) || doc.startDate;
-      const d2 = momentDate(doc.endDate) || doc.endDate;
-      doc.startDate = moment(doc.startDate).isValid() ? d1 : doc.startDate;
-      doc.endDate = moment(doc.endDate).isValid() ? d2 : doc.endDate;
-  
-      newDocs.push(doc);
+      return newDocs.push(doc);
+    }
+    let start;
+    let end;
+    if (parseFloat(doc.mtgStart) > 0.0 && parseFloat(doc.mtgEnd) < 1.0) {
+      start = momentTime(new Date(SendPage.parseDateExcel(doc.mtgStart)));
+      end = momentTime(new Date(SendPage.parseDateExcel(doc.mtgEnd)));
+      console.log(doc.mtgStart);
+      console.log(start);
+      doc.mtgStart = start;
+      doc.mtgEnd = end;
+    } else {
+      start = momentTime(doc.mtgStart) || doc.mtgStart;
+      end = momentTime(doc.mtgEnd) || doc.mtgEnd;
+      doc.mtgStart = moment(doc.mtgStart).isValid() ? start : doc.mtgStart;
+      doc.mtgEnd = moment(doc.mtgEnd).isValid() ? end : doc.mtgEnd;
     }
 
- 
-  })
+    const d1 = momentDate(doc.startDate) || doc.startDate;
+    const d2 = momentDate(doc.endDate) || doc.endDate;
+    doc.startDate = moment(doc.startDate).isValid() ? d1 : doc.startDate;
+    doc.endDate = moment(doc.endDate).isValid() ? d2 : doc.endDate;
+
+    return newDocs.push(doc);
+  });
 
   let schema = null;
   return helpers.buildTableStructureFromSchema(Courses.CoursesSchema).then((result) => {

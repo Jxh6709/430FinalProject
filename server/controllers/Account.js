@@ -99,10 +99,10 @@ const changePassword = (request, response) => {
 };
 
 const getToken = (request, response) => {
-  const req = request;
+  // const req = request;
   const res = response;
   const csrfJSON = {
-    csrfToken: null//req.csrfToken(),
+    csrfToken: null, // req.csrfToken(),
   };
   res.json(csrfJSON);
 };

@@ -21,7 +21,7 @@ const parseDateExcel = (excelTimestamp) => {
   const delta = excelEpochAsUnixTimestamp - missingLeapYearDay;
   const excelTimestampAsUnixTimestamp = excelTimestamp * secondsInDay * 1000;
   const parsed = excelTimestampAsUnixTimestamp + delta;
-  return isNaN(parsed) ? null : parsed;
+  return Number.isNaN(parsed) ? null : parsed;
 };
 
 const getFacultyInfoAndMakeDocument = async (id, req, res, courseArr, courses) => {
@@ -69,9 +69,9 @@ const buildCoursesArray = async (courseObjs) => {
     console.log(c);
     if (c.days !== null) {
       console.log(c.mtgStart);
-      if (c.mtgStart.indexOf(".") == -1 || c.mtgEnd.indexOf(".") == -1) {
+      if (c.mtgStart.indexOf('.') === -1 || c.mtgEnd.indexOf('.') === -1) {
         obj.course = `${c.subject} (${c.catalog}) 0${c.section} - ${c.descr} ${c.days} ${c.mtgStart} - ${c.mtgEnd}`;
-      }else {
+      } else {
         obj.course = `${c.subject} (${c.catalog}) 0${c.section} - ${c.descr} ${c.days} ${momentTime(new Date(parseDateExcel(c.mtgStart)))} - ${momentTime(new Date(parseDateExcel(c.mtgEnd)))}`;
       }
     } else {
@@ -202,5 +202,5 @@ const handleContracts = async (req, res) => {
 
 module.exports = {
   handleContracts,
-  parseDateExcel
+  parseDateExcel,
 };

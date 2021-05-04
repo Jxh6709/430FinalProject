@@ -1,4 +1,4 @@
-const csrf = require('csurf');
+// const csrf = require('csurf');
 const url = require('url');
 const redis = require('redis');
 const session = require('express-session');
