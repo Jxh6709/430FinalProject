@@ -1,3 +1,4 @@
+const dotenv = require('dotenv');
 // const csrf = require('csurf');
 const url = require('url');
 const redis = require('redis');
@@ -12,7 +13,7 @@ const mongoose = require('mongoose');
 const expressHandlebars = require('express-handlebars');
 const RedisStore = require('connect-redis')(session);
 
-
+dotenv.config()
 const port = process.env.PORT || process.env.NODE_PORT || 8080;
 
 const dbURL = process.env.MONGODB_URI;
