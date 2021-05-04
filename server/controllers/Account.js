@@ -22,8 +22,9 @@ const loginPage = (req, res) => {
     }
   });
 
-  res.render('login', { //csrfToken: req.csrfToken(), 
-    title: 'Contract Solutions' });
+  res.render('login', { // csrfToken: req.csrfToken(),
+    title: 'Contract Solutions',
+  });
 };
 
 
