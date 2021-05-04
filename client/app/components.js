@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import MaterialTable from 'material-table';
 import axios from 'axios';
+import Button from '@material-ui/core/Button';
 import { ToastContainer, toast } from 'react-toastify';
 import {sendAjax} from './index';
 import TelegramIcon from '@material-ui/icons/Telegram';
@@ -42,6 +43,38 @@ export const GenTable = (props) => {
     data: [
     ]
   });
+
+  //for the file upload
+  const hiddenFileInput = React.useRef(null)
+  const handleFormClick = event => {
+    hiddenFileInput.current.click()
+  }
+  const handleChange = (e, csrf ) => {
+    const fileUploaded = e.target.files[0]
+    console.log("file uploaded");
+    console.log(fileUploaded);
+    // sendAjax('POST','/uploadCourses',{fileUploaded,_csrf: props.csrf}, (res) => {
+    //   if (res) {
+    //       //yayToast(`User ${newData.username} has been created!`); 
+    //       yayToast('Successful creation');
+    //   }
+    // });
+    let formData = new FormData();
+    formData.append('file', fileUploaded)
+    axios.post('/uploadCourses',
+        formData, {
+          headers: {
+            'Content-Type' : 'multipart/form-data'
+          }
+        }).then(function () {
+          console.log('SUCCESS!!');
+          yayToast('Successful upload');
+        })
+        .catch(function () {
+          console.log('FAILURE!!');
+        })
+    
+  }
 
   return (
       <div>
@@ -110,6 +143,19 @@ export const GenTable = (props) => {
           }),
       }}
     />
+    {
+      props.title.includes("Courses") && 
+      <>
+      <Button variant="contained" color="primary" onClick={handleFormClick}>
+        Upload Courses
+      </Button>
+      <input type="file" ref={hiddenFileInput} onChange={e=> {
+        handleChange(e, props.csrf)
+      }}
+        style={{display: 'none'}} 
+      />
+      </>
+    }
     <ToastContainer />
       </div> 
   );

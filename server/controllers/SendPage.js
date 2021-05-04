@@ -13,6 +13,17 @@ let fullUrl;
 
 let jszip;
 
+const parseDateExcel = (excelTimestamp) => {
+  const secondsInDay = 24 * 60 * 60;
+  const excelEpoch = new Date(1899, 11, 31);
+  const excelEpochAsUnixTimestamp = excelEpoch.getTime();
+  const missingLeapYearDay = secondsInDay * 1000;
+  const delta = excelEpochAsUnixTimestamp - missingLeapYearDay;
+  const excelTimestampAsUnixTimestamp = excelTimestamp * secondsInDay * 1000;
+  const parsed = excelTimestampAsUnixTimestamp + delta;
+  return isNaN(parsed) ? null : parsed;
+};
+
 const getFacultyInfoAndMakeDocument = async (id, req, res, courseArr, courses) => {
   try {
     const infoReq = axios.get(`${fullUrl}/getFacultyInfo?id=${id}`);
@@ -20,6 +31,7 @@ const getFacultyInfoAndMakeDocument = async (id, req, res, courseArr, courses) =
 
     const info = facInfo.data;
     const yearsWorked = moment.duration(moment(new Date()).diff(moment(info.startDate))).years();
+    console.log(req.body);
     const docObj = {
       fname: info.firstName,
       lname: info.lastName,
@@ -54,8 +66,14 @@ const buildCoursesArray = async (courseObjs) => {
     const obj = {};
 
     obj.id = c.courseID;
+    console.log(c);
     if (c.days !== null) {
-      obj.course = `${c.subject} (${c.catalog}) 0${c.section} - ${c.descr} ${c.days} ${momentTime(c.mtgStart)} - ${momentTime(c.mtgEnd)}`;
+      console.log(c.mtgStart);
+      if (c.mtgStart.indexOf(".") == -1 || c.mtgEnd.indexOf(".") == -1) {
+        obj.course = `${c.subject} (${c.catalog}) 0${c.section} - ${c.descr} ${c.days} ${c.mtgStart} - ${c.mtgEnd}`;
+      }else {
+        obj.course = `${c.subject} (${c.catalog}) 0${c.section} - ${c.descr} ${c.days} ${momentTime(new Date(parseDateExcel(c.mtgStart)))} - ${momentTime(new Date(parseDateExcel(c.mtgEnd)))}`;
+      }
     } else {
       obj.course = `${c.subject} (${c.catalog}) 0${c.section} - ${c.descr} Online`;
       obj.isOnline = true;
@@ -184,4 +202,5 @@ const handleContracts = async (req, res) => {
 
 module.exports = {
   handleContracts,
+  parseDateExcel
 };

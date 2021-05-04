@@ -33,11 +33,11 @@ mongoose.connect(dbURL, mongooseOptions, (err) => {
 // REDIS
 let redisURL = {
   // settings
-  hostname: 'redis-17423.c84.us-east-1-2.ec2.cloud.redislabs.com',
-  port: '17423',
+  hostname: 'redis-10084.c232.us-east-1-2.ec2.cloud.redislabs.com',
+  port: '10084',
 };
 
-let redisPASS = 'aTfUnnecty3hdfkkrwEhVj7mxBLPyXu5';
+let redisPASS = 'tZuCwc3EyeEiDO3GUV6YDuvvDBzVhMqL';
 
 // for heroku
 const passIndex = 1;
@@ -83,13 +83,13 @@ app.disable('x-powered-by');
 app.use(cookieParser());
 
 // csrf time
-app.use(csrf());
-app.use((err, req, res, next) => {
-  if (err.code !== 'EBADCSRFTOKEN') return next(err);
+// app.use(csrf());
+// app.use((err, req, res, next) => {
+//   if (err.code !== 'EBADCSRFTOKEN') return next(err);
 
-  console.log('Missing csrf token');
-  return false;
-});
+//   console.log('Missing csrf token');
+//   return false;
+// });
 
 router(app);
 

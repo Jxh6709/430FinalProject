@@ -43,12 +43,12 @@ const CoursesSchema = new mongoose.Schema({
     required: true,
   },
   mtgStart: {
-    type: Date,
-    required: true,
+    type: String,
+    required: false,
   },
   mtgEnd: {
-    type: Date,
-    required: true,
+    type: String,
+    required: false,
   },
   instructor: {
     required: true,

@@ -22,7 +22,7 @@ const docIt = (body) => {
 
   const doc = new Docxtemplater();
   doc.loadZip(zip);
-
+  console.log(body);
   doc.setData({
     letter_date: moment(new Date()).format('l'),
     first_name: body.fname,

@@ -1,4 +1,7 @@
 const axios = require('axios').default;
+
+const SendPage = require('./SendPage');
+
 const readXlsxFile = require('read-excel-file/node');
 const moment = require('moment');
 const models = require('../models');
@@ -20,6 +23,7 @@ const parseDateExcel = (excelTimestamp) => {
 
 const upload = async (req, res) => {
   const fullUrl = `${req.protocol}://${req.get('host')}`;
+  console.log(req.file)
   try {
     if (req.file === undefined) {
       return res.status(400).error({ error: 'Please Upload an Excel File' });
@@ -37,13 +41,12 @@ const upload = async (req, res) => {
 
       rows.forEach((r) => {
         const dates = r[7].split(' - ');
-        const nameSplit = r[11].split(',');
+        const nameSplit = r[12].split(',');
         console.log(nameSplit);
         promises.push(axios.get(
           `${fullUrl}/getFacultyByName?fname=${nameSplit[1].split(' ')[0]}&lname=${nameSplit[0]}`,
         ).then((result) => {
           const id = result.data.data._id;
-
           const courseData = {
             courseID: r[1],
             term: r[0],
@@ -55,37 +58,75 @@ const upload = async (req, res) => {
             startDate: dates[0],
             endDate: dates[1],
             days: r[8],
-            mtgStart: moment(parseDateExcel(r[9])),
-            mtgEnd: moment(parseDateExcel(r[10])),
+            mtgStart: r[9], 
+            mtgEnd: r[10],
             instructor: id,
           };
-
+          //console.log(courseData);
           coursesToAdd.push(courseData);
         }).catch((err) => {
           console.log(err.response.config.url);
         }));
       });
+      return Promise.all(promises).then(() => {
+        //res.json({coursesToAdd});
+        Courses.CoursesModel.insertMany(coursesToAdd).then(() => res.json({ success: 'Successful upload' }))
+          .catch((err) => res.status(400).json({ error: err.message }));
+      });
     });
-    return Promise.all(promises).then(() => {
-      Courses.CoursesModel.insertMany(coursesToAdd).then(() => res.json({ success: 'Successful upload' }))
-        .catch((err) => res.status(400).json({ error: err.message }));
-    });
+   
   } catch (e) {
     console.log(e);
     return res.status(500).json({ error: 'Something went wrong ' });
   }
 };
 
+const momentDate = (date) => moment(date).format('YYYY-MM-DD');
+
+const momentTime = (time) => moment(time).format('hh:mm');
 
 const getAllCourses = (req, res) => Courses.CoursesModel.getAllCourses((err, docs) => {
   if (err || !docs) {
     return res.status(404).json({ error: 'No Courses Found' });
   }
+  const newDocs = []
+  let formattedTimes = docs.map((doc) => {
+
+    if (doc.mtgStart == null || doc.mtgEnd == null) {
+      newDocs.push(doc);
+      return
+    }else {
+      let start;
+      let end;
+      if (parseFloat(doc.mtgStart) > 0.0 && parseFloat(doc.mtgEnd) < 1.0) {
+        start = momentTime(new Date(SendPage.parseDateExcel(doc.mtgStart)));
+        end = momentTime(new Date(SendPage.parseDateExcel(doc.mtgEnd)));
+        console.log(doc.mtgStart)
+        console.log(start)
+        doc.mtgStart = start;
+        doc.mtgEnd = end;
+      } else {
+         start = momentTime(doc.mtgStart) || doc.mtgStart;
+         end = momentTime(doc.mtgEnd) || doc.mtgEnd;
+         doc.mtgStart = moment(doc.mtgStart).isValid() ? start : doc.mtgStart;
+         doc.mtgEnd = moment(doc.mtgEnd).isValid() ? end : doc.mtgEnd;
+      }
+  
+      const d1 = momentDate(doc.startDate) || doc.startDate;
+      const d2 = momentDate(doc.endDate) || doc.endDate;
+      doc.startDate = moment(doc.startDate).isValid() ? d1 : doc.startDate;
+      doc.endDate = moment(doc.endDate).isValid() ? d2 : doc.endDate;
+  
+      newDocs.push(doc);
+    }
+
+ 
+  })
 
   let schema = null;
   return helpers.buildTableStructureFromSchema(Courses.CoursesSchema).then((result) => {
     schema = result;
-    return res.json({ data: docs, cols: schema });
+    return res.json({ data: newDocs, cols: schema });
   });
 });
 

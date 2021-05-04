@@ -1,5 +1,7 @@
 const profilePage = (req, res) => {
-  res.render('app', { csrfToken: req.csrfToken(), greeting: `Welcome ${req.session.account.username}` });
+  res.render('app', { //csrfToken: req.csrfToken(), 
+    greeting: `Welcome ${req.session.account.username}` 
+  });
 };
 
 const notFound = (req, res) => {
