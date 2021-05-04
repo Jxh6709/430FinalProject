@@ -15,7 +15,7 @@ const RedisStore = require('connect-redis')(session);
 
 const port = process.env.PORT || process.env.NODE_PORT || 8080;
 
-const dbURL = 'mongodb+srv://admin:Fruitfly8@cluster0.tcnua.mongodb.net/ContractSolutions?retryWrites=true&w=majority';
+const dbURL = process.env.MONGODB_URI;
 
 // mongoose setup
 const mongooseOptions = {

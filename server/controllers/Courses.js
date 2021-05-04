@@ -27,30 +27,30 @@ const upload = async (req, res) => {
     return readXlsxFile(path).then((rows) => {
       // remove headers for now
       const headers = rows[0];
-      const lheaders = headers.map(h => h.toLowerCase());
+      const lheaders = headers.map((h) => h.toLowerCase());
       rows.shift();
 
       rows.forEach((r) => {
-        const dates = r[lheaders.indexOf("dates")].split(' - ');
-        const nameSplit = r[lheaders.indexOf("instructor")].split(',');
+        const dates = r[lheaders.indexOf('dates')].split(' - ');
+        const nameSplit = r[lheaders.indexOf('instructor')].split(',');
         console.log(nameSplit);
         promises.push(axios.get(
           `${fullUrl}/getFacultyByName?fname=${nameSplit[1].split(' ')[0]}&lname=${nameSplit[0]}`,
         ).then((result) => {
           const id = result.data.data._id;
           const courseData = {
-            courseID: r[lheaders.indexOf("course id")],
-            term: r[lheaders.indexOf("term")],
-            classNbr: r[lheaders.indexOf("class nbr")],
-            subject: r[lheaders.indexOf("subject")],
-            catalog: r[lheaders.indexOf("catalog")],
-            descr: r[lheaders.indexOf("descr")],
-            section: r[lheaders.indexOf("section")],
+            courseID: r[lheaders.indexOf('course id')],
+            term: r[lheaders.indexOf('term')],
+            classNbr: r[lheaders.indexOf('class nbr')],
+            subject: r[lheaders.indexOf('subject')],
+            catalog: r[lheaders.indexOf('catalog')],
+            descr: r[lheaders.indexOf('descr')],
+            section: r[lheaders.indexOf('section')],
             startDate: dates[0],
             endDate: dates[1],
-            days: r[lheaders.indexOf("days")],
-            mtgStart: r[lheaders.indexOf("mtg start")],
-            mtgEnd: r[lheaders.indexOf("mtg end")],
+            days: r[lheaders.indexOf('days')],
+            mtgStart: r[lheaders.indexOf('mtg start')],
+            mtgEnd: r[lheaders.indexOf('mtg end')],
             instructor: id,
           };
           // console.log(courseData);
