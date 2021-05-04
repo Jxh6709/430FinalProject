@@ -26,29 +26,31 @@ const upload = async (req, res) => {
 
     return readXlsxFile(path).then((rows) => {
       // remove headers for now
+      const headers = rows[0];
+      const lheaders = headers.map(h => h.toLowerCase());
       rows.shift();
 
       rows.forEach((r) => {
-        const dates = r[7].split(' - ');
-        const nameSplit = r[12].split(',');
+        const dates = r[lheaders.indexOf("dates")].split(' - ');
+        const nameSplit = r[lheaders.indexOf("instructor")].split(',');
         console.log(nameSplit);
         promises.push(axios.get(
           `${fullUrl}/getFacultyByName?fname=${nameSplit[1].split(' ')[0]}&lname=${nameSplit[0]}`,
         ).then((result) => {
           const id = result.data.data._id;
           const courseData = {
-            courseID: r[1],
-            term: r[0],
-            classNbr: r[2],
-            subject: r[3],
-            catalog: r[4],
-            descr: r[6],
-            section: r[5],
+            courseID: r[lheaders.indexOf("course id")],
+            term: r[lheaders.indexOf("term")],
+            classNbr: r[lheaders.indexOf("class nbr")],
+            subject: r[lheaders.indexOf("subject")],
+            catalog: r[lheaders.indexOf("catalog")],
+            descr: r[lheaders.indexOf("descr")],
+            section: r[lheaders.indexOf("section")],
             startDate: dates[0],
             endDate: dates[1],
-            days: r[8],
-            mtgStart: r[9],
-            mtgEnd: r[10],
+            days: r[lheaders.indexOf("days")],
+            mtgStart: r[lheaders.indexOf("mtg start")],
+            mtgEnd: r[lheaders.indexOf("mtg end")],
             instructor: id,
           };
           // console.log(courseData);
