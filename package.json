@@ -82,6 +82,7 @@
     "downloadjs": "^1.4.7",
     "downloads-folder": "^1.0.2",
     "email-validator": "^2.0.4",
+    "excel": "^1.0.1",
     "excel-date-to-js": "^1.0.2",
     "express": "^4.17.1",
     "express-handlebars": "^3.1.0",
@@ -113,7 +114,8 @@
     "stream": "0.0.2",
     "sync": "^0.2.5",
     "underscore": "^1.9.2",
-    "watchify": "^3.11.1"
+    "watchify": "^3.11.1",
+    "xlsx": "^0.16.9"
   },
   "browserify": {
     "transform": [

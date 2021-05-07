@@ -3,6 +3,7 @@ import MaterialTable from 'material-table';
 import axios from 'axios';
 import Button from '@material-ui/core/Button';
 import { ToastContainer, toast } from 'react-toastify';
+import xlsx from 'xlsx'
 import {sendAjax} from './index';
 import TelegramIcon from '@material-ui/icons/Telegram';
 import FindInPageIcon from '@material-ui/icons/FindInPage';
@@ -11,6 +12,7 @@ import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import SupervisorAccountIcon from '@material-ui/icons/SupervisorAccount';
 import SchoolIcon from '@material-ui/icons/School';
 import AssignmentIcon from '@material-ui/icons/Assignment';
+import { json } from 'body-parser';
 
 
 export const yayToast = (msg) => {
@@ -61,18 +63,40 @@ export const GenTable = (props) => {
     // });
     let formData = new FormData();
     formData.append('file', fileUploaded)
-    axios.post('/uploadCourses',
-        formData, {
-          headers: {
-            'Content-Type' : 'multipart/form-data'
+    let reader = new FileReader()
+    reader.onload = ((e) => {
+      let data = e.target.result;
+      let workbook = xlsx.read(data, {
+        type: 'binary'
+      });
+      workbook.SheetNames.forEach(function(sheetName) {
+        // Here is your object
+        let XL_row_object = xlsx.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+        let json_object = JSON.stringify(XL_row_object);
+        console.log(JSON.parse(json_object));
+        sendAjax('POST','/uploadCoursesJSON',{data: json_object,_csrf: props.csrf}, (res) => {
+          if (res) {
+              //yayToast(`User ${newData.username} has been created!`); 
+              yayToast('Successful creation');
           }
-        }).then(function () {
-          console.log('SUCCESS!!');
-          yayToast('Successful upload');
-        })
-        .catch(function () {
-          console.log('FAILURE!!');
-        })
+      })
+      })
+    })
+    reader.onerror = ((err) => console.log(err));
+    reader.readAsBinaryString(fileUploaded);
+    
+    // axios.post('/uploadCourses',
+    //     formData, {
+    //       headers: {
+    //         'Content-Type' : 'multipart/form-data'
+    //       }
+    //     }).then(function () {
+    //       console.log('SUCCESS!!');
+    //       yayToast('Successful upload');
+    //     })
+    //     .catch(function () {
+    //       console.log('FAILURE!!');
+    //     })
     
   }
 

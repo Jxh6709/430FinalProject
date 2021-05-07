@@ -32,6 +32,7 @@ const router = (app) => {
   app.post('/addCourse', mid.requiresLogin, mid.requiresSecure, controllers.Courses.addCourse);
   app.delete('/deleteCourse', mid.requiresLogin, mid.requiresSecure, controllers.Courses.deleteCourse);
   app.post('/uploadCourses', upload.single('file'), controllers.Courses.upload);
+  app.post('/uploadCoursesJSON', upload.single('file'), controllers.Courses.uploadFromJSON);
 
   app.post('/handleContracts', mid.requiresLogin, mid.requiresSecure, controllers.SendPage.handleContracts);
 
