@@ -55,14 +55,7 @@ export const GenTable = (props) => {
     const fileUploaded = e.target.files[0]
     console.log("file uploaded");
     console.log(fileUploaded);
-    // sendAjax('POST','/uploadCourses',{fileUploaded,_csrf: props.csrf}, (res) => {
-    //   if (res) {
-    //       //yayToast(`User ${newData.username} has been created!`); 
-    //       yayToast('Successful creation');
-    //   }
-    // });
-    let formData = new FormData();
-    formData.append('file', fileUploaded)
+
     let reader = new FileReader()
     reader.onload = ((e) => {
       let data = e.target.result;
@@ -77,26 +70,13 @@ export const GenTable = (props) => {
         sendAjax('POST','/uploadCoursesJSON',{data: json_object,_csrf: props.csrf}, (res) => {
           if (res) {
               //yayToast(`User ${newData.username} has been created!`); 
-              yayToast('Successful creation');
+              yayToast('Successful Upload');
           }
       })
       })
     })
     reader.onerror = ((err) => console.log(err));
     reader.readAsBinaryString(fileUploaded);
-    
-    // axios.post('/uploadCourses',
-    //     formData, {
-    //       headers: {
-    //         'Content-Type' : 'multipart/form-data'
-    //       }
-    //     }).then(function () {
-    //       console.log('SUCCESS!!');
-    //       yayToast('Successful upload');
-    //     })
-    //     .catch(function () {
-    //       console.log('FAILURE!!');
-    //     })
     
   }
 
@@ -174,7 +154,8 @@ export const GenTable = (props) => {
         Upload Courses
       </Button>
       <input type="file" ref={hiddenFileInput} onChange={e=> {
-        handleChange(e, props.csrf)
+        handleChange(e, props.csrf);
+       
       }}
         style={{display: 'none'}} 
       />

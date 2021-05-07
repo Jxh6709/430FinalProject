@@ -67,7 +67,7 @@ const buildCoursesArray = async (courseObjs) => {
 
     obj.id = c.courseID;
     console.log(c);
-    if (c.days !== null) {
+    if (c.days !== '') {
       console.log(c.mtgStart);
       if (c.mtgStart.indexOf('.') === -1 || c.mtgEnd.indexOf('.') === -1) {
         obj.course = `${c.subject} (${c.catalog}) 0${c.section} - ${c.descr} ${c.days} ${c.mtgStart} - ${c.mtgEnd}`;
@@ -99,6 +99,7 @@ const genenateDocumentForFaculty = async (id, req, res) => {
     return null;
   } catch (e) {
     console.log(`could not make document ${id}`);
+    console.log(e);
     return res.status(500).json({ error: 'Something went wrong, please try again later.' });
   }
 };
