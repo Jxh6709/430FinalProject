@@ -19,7 +19,7 @@ const upload = async (req, res) => {
     }
 
     const path = `${__dirname
-      }../../../resources/static/assets/uploads/${req.file.filename}`;
+    }../../../resources/static/assets/uploads/${req.file.filename}`;
 
     const coursesToAdd = [];
     const promises = [];
@@ -67,9 +67,8 @@ const upload = async (req, res) => {
     return res.status(500).json({ error: 'Something went wrong ' });
   }
 };
-const getUniqueListBy = (arr, key) => {
-  return [...new Map(arr.map(item => [item[key], item])).values()]
-}
+const upsert = { upsert: true };
+
 const uploadFromJSON = async (req, res) => {
   const fullUrl = `${req.protocol}://${req.get('host')}`;
   console.log(req.body);
@@ -96,32 +95,35 @@ const uploadFromJSON = async (req, res) => {
           courseID: r['Course ID'],
           term: r.Term,
           classNbr: r['Class Nbr'],
-          subject: r['Subject'],
-          catalog: r['Catalog'],
-          descr: r['Descr'],
-          section: r['Section'],
+          subject: r.Subject,
+          catalog: r.Catalog,
+          descr: r.Descr,
+          section: r.Section,
           startDate: dates[0],
           endDate: dates[1],
-          days: r['Days'],
+          days: r.Days,
           mtgStart: r['Mtg Start'],
           mtgEnd: r['Mtg End'],
           instructor: id,
         };
         // console.log(courseData);
 
-        Courses.CoursesModel.findOneAndUpdate(courseData, courseData, {upsert: true}, (err, doc) => {
+        Courses.CoursesModel.findOneAndUpdate(courseData, courseData, upsert, (err, doc) => {
           if (err) {
             console.log(err);
           }
           console.log(doc);
-        })
+        });
 
         coursesToAdd.push(courseData);
       }).catch((err) => {
         console.log(err.response.config.url);
       }));
-      return Promise.all(promises).then(() => res.json({success: coursesToAdd})).catch((err) => console.log(err))
-    //  return Promise.all(getUniqueListBy(promises, 'instructor')).then(() => Courses.CoursesModel.insertMany(coursesToAdd).then(() => res.json({ success: 'Successful upload' }))
+      return Promise.all(promises).then(() => res.json({ success: coursesToAdd }))
+        .catch((err) => console.log(err));
+    //  return Promise.all(getUniqueListBy(promises, 'instructor'))
+    // .then(() => Courses.CoursesModel.insertMany(coursesToAdd)
+    // .then(() => res.json({ success: 'Successful upload' }))
     //    .catch((err) => res.status(400).json({ error: err.message })));
     });
   } catch (e) {
@@ -274,5 +276,5 @@ module.exports = {
   getTerms,
   getCoursesPerInstructorAndTerm: getSpecificCourses,
   upload,
-  uploadFromJSON
+  uploadFromJSON,
 };

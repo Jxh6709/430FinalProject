@@ -12,7 +12,8 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const expressHandlebars = require('express-handlebars');
 const RedisStore = require('connect-redis')(session);
-dotenv.config()
+
+dotenv.config();
 const port = process.env.PORT || process.env.NODE_PORT || 8080;
 
 const dbURL = process.env.MONGODB_URI;
