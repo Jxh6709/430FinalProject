@@ -116,7 +116,7 @@ const uploadFromJSON = async (req, res) => {
         });
 
         coursesToAdd.push(courseData);
-      }) .catch((err) => {
+      }).catch((err) => {
         console.log(err.response.config.url);
       }));
       return Promise.all(promises).then(() => res.json({ success: coursesToAdd }))
