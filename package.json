@@ -115,7 +115,7 @@
     "sync": "^0.2.5",
     "underscore": "^1.9.2",
     "watchify": "^3.11.1",
-    "xlsx": "^0.16.9"
+    "xlsx": "^0.17.0"
   },
   "browserify": {
     "transform": [
